@@ -13,7 +13,6 @@ from discord_slash import SlashCommand
 from discord_slash.utils.manage_commands import create_option
 from dotenv import load_dotenv
 
-from AuditData import AuditData
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -82,39 +81,12 @@ async def help(ctx):
 
 
 
-log = []
-with open('logs.txt', 'a+', encoding='utf-8') as a:
-  try:
-    # log.append(AuditData("a", "b", "c", "d", "e"))
-    for line in a:
-       (msg_id, user_name, user_id, activity, timestamp) = line.split()
-       log.append(AuditData(msg_id, user_name, user_id, activity, timestamp))
-  except Exception as e:
-    print(e)
-
-
-def add_audit_event(msg_id:str, user_name:str, user_id:str, activity:str, timestamp:str):
-    with open('logs.txt', 'a+', encoding='utf-8') as a:
-        try:
-            a.write(str(msg_id) + ","
-                    + str(user_name) + ","
-                    + str(user_id) + ","
-                    + str(activity) + ","
-                    + str(timestamp) + "\n")
-
-        except Exception as e:
-            print(e)
-
 
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
-    add_audit_event(message.author.display_name,
-                    message.author.roles,
-                    "Member has used a on_message event.",
-                    message.author.avatar_url,
-                    datetime.datetime.utcnow())
+
 
     if message.content == 'o!random number':
         await message.channel.send(f'This is your random number {random.randrange(100000)}')
@@ -494,11 +466,6 @@ async def on_member_join(member):
 
 @bot.event
 async def on_member_join(member):
-    add_audit_event(member.id,
-                    member.display_name,
-                    f"{member} has joined the server!",
-                    "Member Joined",
-                    datetime.datetime.utcnow())
 
     a = [f"Everyone welcome {member}", f"{member} is here", f"Lets welcome {member}. Enjoy your stay :)", f"OMG {member} is here. Its a honor to have you here!"]
     welcome_message = a[randint(0, 1 )]
@@ -508,11 +475,7 @@ async def on_member_join(member):
 
 @bot.event
 async def on_member_remove(member):
-    add_audit_event(member.id,
-                    member.display_name,
-                    f" {member} has left the server",
-                    "Member removed",
-                    datetime.datetime.utcnow())
+
     b = [f"{member} has just left the server :(", f"{member} just left we hope you had a good time.", f"Oh no {member} has left the server.", f"{member} has just left. Come back soon! :')"]
     leave_message = b[randint(0, 1)]
     channel = discord.utils.get(member.guild.channels, name='welcome-and-leave')
@@ -524,11 +487,7 @@ async def on_member_remove(member):
 async def on_member_update(before, after):
     if not before.bot:
         if before.display_name != after.display_name:
-            add_audit_event(before.id,
-                            before.author.display_name,
-                            before.author.id,
-                            "Member Updated",
-                            datetime.datetime.utcnow())
+
             embed = Embed(title="Member update",
                           description=f"N {before.display_name}.",
                           colour=after.colour,
@@ -547,39 +506,12 @@ async def on_member_update(before, after):
                         await channel.send(embed=embed)
 
 
-log = []
-with open('logs.txt', 'a+', encoding='utf-8') as a:
-  try:
-    # log.append(AuditData("a", "b", "c", "d", "e"))
-    for line in a:
-       (msg_id, user_name, user_id, activity, timestamp) = line.split()
-       log.append(AuditData(msg_id, user_name, user_id, activity, timestamp))
-  except Exception as e:
-    print(e)
-
-
-def add_audit_event(msg_id:str, user_name:str, user_id:str, activity:str, timestamp:str):
-    with open('logs.txt', 'a+', encoding='utf-8') as a:
-        try:
-            a.write(str(msg_id) + ","
-                    + str(user_name) + ","
-                    + str(user_id) + ","
-                    + str(activity) + ","
-                    + str(timestamp) + "\n")
-
-        except Exception as e:
-            print(e)
-
 
 @bot.event
 async def on_message_edit(before, after):
     if not before.author.bot:
         if before.content != after.content:
-            add_audit_event(before.id,
-                            before.author.display_name,
-                            before.author.id,
-                            "Message edited",
-                            datetime.datetime.utcnow())
+
 
             embed = Embed(title="Message edit",
                           description=f"Edit by {before.author.display_name}.",
@@ -599,11 +531,7 @@ async def on_message_edit(before, after):
 
 @bot.event
 async def on_guild_channel_create(channel):
-    add_audit_event(channel.id,
-                    "Channel",
-                    "A channel has been created:",
-                    channel.name,
-                    datetime.datetime.utcnow())
+
     embed = Embed(title="Channel created.",
                       description=f"Channel created by",
                        #colour=message.author.color,
@@ -622,11 +550,7 @@ async def on_guild_channel_create(channel):
 
 @bot.event
 async def on_guild_channel_delete(channel):
-    add_audit_event(channel.id,
-                    "Channel",
-                    f"A channel has been deleted: {channel.name}",
-                    channel.name,
-                    datetime.datetime.utcnow())
+
     embed = Embed(title="Channel deleted.",
                       description=f"Channel deleted {channel.name}",
                        #colour=message.author.color,
@@ -642,15 +566,8 @@ async def on_guild_channel_delete(channel):
                 if channel.name == 'audit-log':
                     await channel.send(embed=embed)
 
-
-
 @bot.event
 async def on_guild_channel_pins_update(channel, last_pin):
-    add_audit_event(channel.id,
-                    "Channel",
-                    "A channel pin has been created:",
-                    channel.name,
-                    datetime.datetime.utcnow())
     embed = Embed(title="Channel pin updated.",
                       description=f"Channel pins made {channel.name}",
                        #colour=message.author.color,
@@ -669,11 +586,7 @@ async def on_guild_channel_pins_update(channel, last_pin):
 
 @bot.event
 async def on_guild_integrations_update(channel, guild):
-    add_audit_event(guild.channels,
-                    "Integration",
-                    "A integration has been updated:",
-                    channel.name,
-                    datetime.datetime.utcnow())
+
     embed = Embed(title="Integration updated.",
                       description=f"Intergration UPDATED",
                        #colour=message.author.color,
@@ -691,11 +604,7 @@ async def on_guild_integrations_update(channel, guild):
 
 @bot.event
 async def on_webhooks_update(channel):
-    add_audit_event(channel.id,
-                    "Webhook",
-                    "A Webhook has been updated:",
-                    channel.name,
-                    datetime.datetime.utcnow())
+
     embed = Embed(title="Webhook Updated.",
                       description=f"Webhook UPDATED",
                        #colour=message.author.color,
@@ -764,11 +673,7 @@ async def on_member_ban(before, after):
 async def on_invite_create(invite):
     invite_user = invite.inviter
     if not invite_user.bot:
-        add_audit_event(invite.inviter.id,
-                        invite.inviter.display_name,
-                        invite.inviter.id,
-                        "Invite created",
-                        datetime.datetime.utcnow())
+
 
         embed = Embed(title="Invite created.",
                       description=f"Invite created by {invite_user.display_name} {invite.url}.",
@@ -790,11 +695,7 @@ async def on_invite_create(invite):
 async def on_message_delete(before):
     if not before.author.bot:
         if before.content:
-            add_audit_event(before.id,
-                            before.author.display_name,
-                            before.author.id,
-                            "Message deleted",
-                            datetime.datetime.utcnow())
+
 
             embed = Embed(title="Message deleted",
                           description=f"Deleted by {before.author.display_name}.",
@@ -817,11 +718,7 @@ async def on_message_delete(before):
 async def on_guild_role_create(role):
 #    if not before.author.bot:
         if role.name:
-            add_audit_event(role.id,
-                            role.name,
-                            role.id,
-                            "Role created",
-                            datetime.datetime.utcnow())
+
 
             embed = Embed(title="Role created",
                           description=f"Name = {role.name}.",
@@ -843,11 +740,7 @@ async def on_guild_role_create(role):
 async def on_guild_role_delete(role):
 #    if not before.author.bot:
         if role.name:
-            add_audit_event(role.id,
-                            role.name,
-                            role.id,
-                            "Role deleted",
-                            datetime.datetime.utcnow())
+
 
             embed = Embed(title="Role deleted",
                           description=f"Name = {role.name}.",
@@ -868,11 +761,7 @@ async def on_guild_role_delete(role):
 @bot.event
 async def on_guild_role_update(before, after):
         if after.name:
-            add_audit_event(after.id,
-                            after.name,
-                            after.id,
-                            "Role updated",
-                            datetime.datetime.utcnow())
+
 
             embed = Embed(title="Role updated",
                           description=f"Name = {after.name}.",
