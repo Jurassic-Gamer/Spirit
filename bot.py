@@ -1,11 +1,9 @@
 import asyncio
 import datetime
-import json
 import os
 import random
 from random import randint
 
-from discord_slash import SlashContext, SlashCommandOptionType
 import discord
 from discord import Embed
 from discord.ext import commands
@@ -13,19 +11,18 @@ from discord_slash import SlashCommand
 from discord_slash.utils.manage_commands import create_option
 from dotenv import load_dotenv
 
-
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
 
 intents = discord.Intents.all()
 
-bot = commands.Bot(command_prefix=".", description="TESTING", intents=intents)
+bot = commands.Bot(command_prefix="$", description="Spirit Bot. Initialized", intents=intents)
 
 slash = SlashCommand(bot, sync_commands=True) # Declares slash commands through the␣
 
 
-guild_ids=[844733913011060779]#, 843302697486647316, 839567563544461372]
+guild_ids=[844733913011060779, ]#, 843302697486647316, 839567563544461372]
 
 
 @slash.slash(name="Ping", description="Finds the bot latency. In Ping Pong! 🏓", guild_ids=guild_ids)
@@ -83,22 +80,88 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
+    if message.content == '$help':
 
-    if message.content == 'o!random number':
+
+        embed = discord.Embed(title="Spirit Help Command!", description="Help Command")
+        embed.add_field(name="Moderation", value='Type ```$help moderation``` to trigger the help command')
+        embed.add_field(name="Audit-Log", value='Type ```$help audit``` to trigger the help command')
+        embed.add_field(name="Fun", value='Type ```$help fun``` to trigger the help command')
+        embed.add_field(name="Modmail", value='Type ```$help modmail``` to trigger the help command')
+        embed.set_footer(
+            text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+            icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+        await message.channel.send(content=None, embed=embed)
+
+    if message.content == '$help moderation':
+
+
+        embed = discord.Embed(title="Spirit Help Admin/moderator Commands!", description="Moderation")
+        embed.add_field(name="$mute", value='```$mute [user] [reason].``` If you do not unmute the user with [$unmute [user] [reason], Then it will auto unmute after 10 minutes.')
+        embed.add_field(name="$Nick", value='```$Nick [user] [new-nickname]```  This gives a user a new server nickname')
+        embed.add_field(name="$Purge", value='```$Purge```, To delete 10 messages at a time in txt channel. ')
+        embed.add_field(name="$slowmode", value='```Type `$slowmode [#channel-name]```  This is a command to enable only 5 seconds slow mode onto a channel.')
+        embed.add_field(name="$kick", value='```$kick [@user] [reason]```  Use this command to kick members. ')
+        embed.add_field(name="Requirements", value='Must have ```Administrator``` Permissions. ')
+        embed.set_footer(
+            text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+            icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+        await message.channel.send(content=None, embed=embed)
+
+
+    if message.content == '$help audit':
+
+
+        embed = discord.Embed(title="Spirit Help Audit Command!", description="Audit Commands")
+        embed.add_field(name="On_message_events", value='Type ```$Audit-log``` to trigger the list of events it responds to')
+        embed.add_field(name="Requirements", value='Must have a channel called ```audit-log``` ')
+        embed.set_footer(
+            text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+            icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+        await message.channel.send(content=None, embed=embed)
+
+    if message.content == '$help modmail':
+
+
+        embed = discord.Embed(title="Spirit Help Modmail Command!", description="Modmail Commands")
+        embed.add_field(name="Modmail", value='DM the bot with your question.')
+        embed.add_field(name="Requirements", value='Must have a channel called ```Modmail``` ')
+        embed.set_footer(
+            text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+            icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+        await message.channel.send(content=None, embed=embed)
+
+    if message.content == '$Audit-log':
+
+        embed = discord.Embed(title="Audit-events", description="List of events bot audit-log responds to.")
+        embed.add_field(name="Events:", value='```On_message_events``` ```On_member_join``` ```on_member_remove``` ```on_message_edit``` ```on_message_delete``` ```on_guild_channel_create``` ```on_guild_channel_delete``` ```on_guild_channels_pins_update``` ```on_webhook_update``` ```on_invite_create``` ```on_role_create``` ```on_role_delete``` ```on_role_update``` ')
+
+        embed.set_footer(
+            text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+            icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+        await message.channel.send(content=None, embed=embed)
+
+    if message.content == '$help fun':
+
+
+        embed = discord.Embed(title="Spirit Help Fun Command!", description="Fun")
+        embed.add_field(name="$random number", value='```$random number``` to pick a number with in a range of 100,000')
+        embed.add_field(name="$Math", value='```$add [num1] [num2]```, ```$sub [num1] [num2]```, ```multiply [num1] [num2]```, ```divide [num1] [num2]```')
+        embed.add_field(name="Who am I", value='```Who am I```, Well it says who you are! ')
+        embed.add_field(name="$ping", value='```$ping```  Finds the bots latency')
+        embed.set_footer(
+            text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+            icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+        await message.channel.send(content=None, embed=embed)
+
+
+    if message.content == '$random number':
         await message.channel.send(f'This is your random number {random.randrange(100000)}')
 
-    if message.content.startswith(".say"):
-                mes = message.content.split()
-                output = ""
-                for word in mes[1:]:
-                    output += word
-                    output += " "
-                await message.channel.purge(limit=1)
-                await message.channel.send(output)
 
-    if message.content.startswith('o!mute'):
+    if message.content.startswith('$mute'):
 
-        message_array2 = message.content[29:]
+        message_array2 = message.content[28:]
 
         # guild = bot.get_guild(839567563544461372)
         mbr = await message.guild.fetch_member(message.raw_mentions[0])
@@ -106,72 +169,54 @@ async def on_message(message):
         guild = message.guild
         mutedRole = discord.utils.get(mbr.roles, name='Muted')
 
-        if not mutedRole:
-            try:
-                mutedRole = await guild.create_role(name="Muted")
-            except Exception as e:
-                print(e)
 
-        for channel in guild.channels:
-            # await message.channel.send("No muted role has been found. Creating role...")
-            await channel.set_permissions(mutedRole, speak=False, send_messages=False, read_message_history=True,
-                                          read_messages=False)
-        # await bot.fetch_user(message.raw_mentions[0]).add_role(mutedRole)
-        # mbr = await message.guild.fetch_member(message.raw_mentions[0])
-        await mbr.add_roles(mutedRole)
-        # await member.add_roles(mutedRole)
-        await message.channel.send(f"Muted {mbr.mention} for reason {message_array2}")
-        await mbr.send(f"You were muted in the server {guild.name} for {message_array2}")
-        await asyncio.sleep(600)
-        await mbr.remove_roles(mutedRole)
-        await message.channel.send(f"You were unmuted by the system! {mbr.mention}. ")
-        await mbr.send(f"You were unmuted in the server {guild.name}")
-
-
-    if message.content.startswith('Annoy'):
-        # message_array6 = message.content[29:]
-        #     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Cocomelon!"))
-
-        # guild = bot.get_guild(839567563544461372)
-        sure = await message.guild.fetch_member(message.raw_mentions[0])
         for userRole in message.author.roles:
-            if userRole.name == 'Omie':
-                await sure.send(f"I was told to annoy you! {sure.mention}")
-                await sure.send(f"I was told to annoy you! {sure.mention}")
-                await sure.send(f"I was told to annoy you! {sure.mention}")
-                await sure.send(f"I was told to annoy you! {sure.mention}")
-                await sure.send(f"I was told to annoy you! {sure.mention}")
-                await sure.send(f"I was told to annoy you! {sure.mention}")
-                await sure.send(f"I was told to annoy you! {sure.mention}")
-                await sure.send(f"I was told to annoy you! {sure.mention}")
-                await sure.send(f"I was told to annoy you! {sure.mention}")
+            if userRole.name == 'Admin':
+                if not mutedRole:
+                    try:
+                        mutedRole = await guild.create_role(name="Muted")
+                    except Exception as e:
+                        print(e)
+
+                for channel in guild.channels:
+                    # await message.channel.send("No muted role has been found. Creating role...")
+                    await channel.set_permissions(mutedRole, speak=False, send_messages=False, read_message_history=True,
+                                                  read_messages=False)
+                await mbr.add_roles(mutedRole)
+                await message.channel.send(f"Muted {mbr.mention} for reason {message_array2}")
+                await mbr.send(f"You were muted in the server {guild.name} for {message_array2}")
+                await asyncio.sleep(600)
+                await mbr.remove_roles(mutedRole)
+                await message.channel.send(f"You were unmuted by the system! {mbr.mention}. ")
+                await mbr.send(f"You were unmuted in the server {guild.name}")
 
 
-    if message.content.startswith('o!Nick'):
-        message_array5 = message.content[29:]
+
+    if message.content.startswith('$Nick'):
+        message_array5 = message.content[28:]
         oka = await message.guild.fetch_member(message.raw_mentions[0])
         guild = message.guild
         for userRole in message.author.roles:
-            if userRole.name == 'Omie':
+            if userRole.name == 'Admin':
                 await oka.edit(member=oka, nick=message_array5)
                 await message.channel.send(f"Changed {oka.mention}  Nickname.")
                 await oka.send(f"Your nickname was changed in a server: {guild.name} for {message_array5}")
 
-    if message.content.startswith('o!slowmode'):
-        message_array6 = message.content[13:]
-        # huh = await message.guild.fetch_channel(message.raw_channel_mentions[0])
-        huh = discord.utils.get(message.raw_channel_mentions[0])
+    if message.content.startswith('$slowmode'):
+        message_array6 = message.content[12:]
+        huh = message.guild.get_channel(message.raw_channel_mentions[0])
+        # huh = discord.utils.get(message.raw_channel_mentions[0])
         guild = message.guild
-        seconds : message_array6
+        # seconds = 5
         for userRole in message.author.roles:
             if userRole.name == 'Admin':
-                await huh.edit(slowmode_delay=seconds)
+                await huh.edit(slowmode_delay=5)
                 await message.channel.send('Slow mode has been enabled!')
 
 
-    if message.content.startswith('o!unmute'):
+    if message.content.startswith('$unmute'):
 
-        message_array3 = message.content[31:]
+        message_array3 = message.content[30:]
 
         # guild = bot.get_guild(839567563544461372)
         mrb = await message.guild.fetch_member(message.raw_mentions[0])
@@ -197,7 +242,7 @@ async def on_message(message):
         await message.channel.send(f"unmuted {mrb.mention} for reason {message_array3}")
         await mrb.send(f"You were unmuted in the server {guild.name} for {message_array3}")
 
-    if message.content.startswith('Purge:'):
+    if message.content.startswith('$Purge'):
         for userRole in message.author.roles:
             if userRole.name == 'Admin':
                 amount = 10
@@ -207,43 +252,43 @@ async def on_message(message):
                 await message.channel.purge(limit=1)
 
 
-    if message.content == 'Who am I':
-        embed = discord.Embed(title="Hello!", description="You name is...")
+    if message.content == '$Who am I':
+        embed = discord.Embed(title="Hello!", description="Your name is...")
         embed.add_field(name="Name:", value='You are' + " " + message.author.display_name)
         embed.set_footer(text="Asked by:" + " " + message.author.display_name)
 
         await message.channel.send(content=None, embed=embed)
 
-        if message.content.startswith('o!add'):
+        if message.content.startswith('$add'):
             variables = message.content.strip().split(' ')
             num1 = int(variables[1])
             num2 = int(variables[2])
             await message.channel.send(num1 + num2)
 
-        if message.content.startswith('o!multiply'):
+        if message.content.startswith('$multiply'):
             variables = message.content.strip().split(' ')
             num1 = int(variables[1])
             num2 = int(variables[2])
             await message.channel.send(num1 * num2)
 
-        if message.content.startswith('o!divide'):
+        if message.content.startswith('$divide'):
             variables = message.content.strip().split(' ')
             num1 = int(variables[1])
             num2 = int(variables[2])
             await message.channel.send(num1 / num2)
 
-        if message.content.startswith('o!sub'):
+        if message.content.startswith('$sub'):
             variables = message.content.strip().split(' ')
             num1 = int(variables[1])
             num2 = int(variables[2])
             await message.channel.send(num1 - num2)
 
-    if message.content.startswith('ping'):
+    if message.content.startswith('$ping'):
         await message.channel.send(f"Pong! {round(bot.latency * 1000)}ms")
 
-    if message.content.startswith('.kick'):
+    if message.content.startswith('$kick'):
         for userRole in message.author.roles:
-            if userRole.name == 'Omie':
+            if userRole.name == 'Admin':
                 message_array = message.content[28:]
                 await message.guild.kick(await bot.fetch_user(message.raw_mentions[0]), reason=message_array[2])
                 # txt = message.content
@@ -253,10 +298,10 @@ async def on_message(message):
                 # print(x)
                 await message.channel.send(f'A member has been kicked for {message_array}')
 
-    if message.content.startswith('o!warn'):
-        message_array3 = message.content[29:]
+    if message.content.startswith('$warn'):
+        message_array3 = message.content[28:]
 
-        guild = bot.get_guild(839567563544461372)
+        guild = message.guild
         mhm = await message.guild.fetch_member(message.raw_mentions[0])
 
         # await bot.fetch_user(message.raw_mentions[0])
@@ -268,7 +313,7 @@ async def on_message(message):
     if message.content.startswith('say'):
 
         for userRole in message.author.roles:
-            if userRole.name == 'Omie':
+            if userRole.name == 'Admin':
 
                 message_array4 = message.content[26:]
                 oki = await message.guild.fetch_member(message.raw_mentions[0])
@@ -379,7 +424,7 @@ async def on_message(message):
 async def ch_pr():
     await bot.wait_until_ready()
 
-    statuses = ["Cocomelon", "Moderation| o!help", f" The bot is on {len(bot.guilds)}servers", "Trying to devise a way to cure.... Sleep"]
+    statuses = ["Logging 20/7!", "Moderation| $help", f" The bot is on {len(bot.guilds)} servers"]
 
     while not bot.is_closed():
 
