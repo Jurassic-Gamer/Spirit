@@ -25,10 +25,6 @@ bot = commands.Bot(command_prefix=".", description="TESTING", intents=intents)
 slash = SlashCommand(bot, sync_commands=True) # Declares slash commands through the␣
 
 
-
-
-
-
 guild_ids=[844733913011060779]#, 843302697486647316, 839567563544461372]
 
 
