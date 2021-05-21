@@ -1,11 +1,12 @@
 import asyncio
 import datetime
+import json
 import os
 import random
 from random import randint
 
 import discord
-from discord import Embed, user
+from discord import Embed, user, member
 from discord.ext import commands
 from discord_slash import SlashCommand
 from discord_slash.utils.manage_commands import create_option
@@ -17,7 +18,7 @@ GUILD = os.getenv('DISCORD_GUILD')
 
 intents = discord.Intents.all()
 
-bot = commands.Bot(command_prefix="$", description="Spirit Bot. Initialized", intents=intents)
+bot = commands.Bot(command_prefix="$", description="Spirit Bot. Initialized", case_insensitive=True, intents=intents)
 
 slash = SlashCommand(bot, sync_commands=True) # Declares slash commands through the␣
 
@@ -74,9 +75,6 @@ async def _pick(ctx, choice1="head", choice2="tail"): # Command with 1 or more a
 # @slash.slash(name="Help", description="This is just a link to the list of command for the bot.", guild_ids=guild_ids)
 # async def help(ctx):
 #   await ctx.send(content="https://bit.ly/3uVdQqK")
-
-
-
 
 
 @bot.event
@@ -341,7 +339,35 @@ async def on_message(message):
         await message.channel.send(content=None, embed=embed)
 
 
+    if message.content.startswith('$Server info'):
+        owner = str(message.guild.owner)
+        id = str(message.guild.id)
+        region = str(message.guild.region)
+        memberCount = str(message.guild.member_count)
+
+        icon = str(message.guild.icon_url)
+
+        embed = discord.Embed(title=f"Guild info", description=f"{message.guild.name}, {id}")
+        embed.add_field(name=f"{message.guild.name} was created at:", value=f'{message.guild.created_at}')
+        embed.add_field(name=f"{message.guild.name}'s owner is:", value=f'{owner}')
+        embed.add_field(name=f"{message.guild.name} has this many members", value=f'{memberCount}')
+        embed.set_footer(
+            text="Asked by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+            icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+        await message.channel.send(content=None, embed=embed)
+        # embed = discord.Embed(
+        #     title=name + " Server Information",
+        #     description="Server info via {guild.name}",
+        #     color=discord.Color.blue()
+        # )
+        # embed.set_thumbnail(url=icon)
+        # embed.add_field(name="Owner", value=owner, inline=True)
+        # embed.add_field(name="Server ID", value=id, inline=True)
+        # embed.add_field(name="Region", value=region, inline=True)
+        # embed.add_field(name="Member Count", value=memberCount, inline=True)
         #
+        # await ctx.send(embed=embed)
+        # #
         # if message.content.startswith('Server info'):
         #     # AP = await message.guild.fetch_member(message.raw_mentions[0])
         #     # guild = message.guild
@@ -909,5 +935,42 @@ async def on_guild_role_update(before, after):
 # async def chnick(ctx, member: discord.Member, nick):
 #     await member.edit(nick=nick)
 #     await ctx.send(f'Nickname was changed for {member.mention} ')
+#
+# @bot.event
+# async def on_ready():
+#     with open('users.json', 'r') as f:
+#         users = json.load(f)
+#
+#     await update_data(users, member)
+#
+#     with open('users.json', 'w') as f:
+#         json.dump(users, f)
+#
+# @bot.event
+# async def on_message(message):
+#     with open('users.json', 'r') as f:
+#         users = json.load(f)
+#
+#     await update_data(users, message.author)
+#     await add_experience(users, message.author, 5)
+#     await level_up(users, message.author, message.channel)
+#
+#     with open('users.json', 'w') as f:
+#         json.dump(users, f)
+#
+# async def update_data(users, user):
+#     if not user.id in users:
+#         users[user.id] = {}
+#         users[user.id]['experience'] = 0
+#         users[user.id]['level'] = 1
+#
+# async def add_experience(users, user, exp):
+#     user[user.id]['experience'] += exp
+#
+# async def level_up(users, user, channel):
+#     experience = users[user.id]['experience']
+#     lvl_start = users[user.id]['level']
+#     level_end = int(experience ** 1/4)
+
 
 bot.run(TOKEN)
