@@ -317,7 +317,38 @@ async def on_message(message):
         await mhm.send(f"You were warned in a server: {guild.name} for {message_array3}")
 
 
-    # if message.content
+    if message.content.startswith('$User info'):
+
+        IDC = await message.guild.fetch_member(message.raw_mentions[0])
+        guild = message.guild
+
+        embed = discord.Embed(title=f"User info {IDC.mention}", description=f"{IDC.display_name}")
+        embed.add_field(name=f"{IDC.display_name} was created at:", value=f'{IDC.created_at}')
+        embed.add_field(name=f"{IDC.display_name} is in these same guilds as me:", value=f'{IDC.mutual_guilds}')
+        embed.set_footer(
+            text="Asked by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+            icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+        await message.channel.send(content=None, embed=embed)
+
+
+        #
+        # if message.content.startswith('Server info'):
+        #     # AP = await message.guild.fetch_member(message.raw_mentions[0])
+        #     # guild = message.guild
+        #     AP = await message.guild
+        #
+        #     embed = discord.Embed(title=f"Server info {AP.name}", description=f"{AP.id}")
+        #     embed.add_field(name=f"{AP.name} was created at:", value=f'{AP.created_at}')
+        #     embed.add_field(name=f"{AP.name} has this many members:", value=f'{AP.member_count}')
+        #     embed.set_footer(
+        #         text="Asked by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+        #         icon_url=AP.avatar_url)  # + " " + datetime.datetime.utcnow())
+        #     await message.channel.send(content=None, embed=embed)
+
+
+
+        # await message.channel.send(f'{IDC.name}, {lol.id}, {lol.color}')
+
 
 
 
@@ -361,12 +392,7 @@ async def on_message(message):
         embed.set_footer(text="Question request by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
         await channel.send(content=None, embed=embed)
         member1 = message.author
-        await message.author.send(f"Hello {member1.mention} This is an automated response for the modmail report system. Please provide your full user name below.\n Please note: When you type your full user_name again this message will appear again. Please ignore it if you have already provided your tag \n EX: Wumpus#0001")
-        await asyncio.sleep(30)
-        await message.author.send('Thank you. You will recieve a Dm soon from one of our staff.')
-
-    elif message.content == '$reply':
-        await message.author.send(f"{message_array8}")
+        await message.author.send(f"Hello {member1.mention} This is an automated response for the modmail report system. Please provide your full user name below.\n Please note: When you type your full user_name again this message will appear again. Please ignore it if you have already provided your tag \n EX: #0001")
 
 
     elif str(message.channel) == "modmail" and message.content.startswith("<"):
