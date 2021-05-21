@@ -387,15 +387,27 @@ async def on_message(message):
 
     if message.content.startswith('$Give'):
         AP = await message.guild.fetch_member(message.raw_mentions[0])
+        BP = message.guild.get_role(message.raw_role_mentions[0])
         guild = message.guild
 
-        memberRole = discord.utils.get(guild.roles, name='Member')
+        # memberRole = discord.utils.get(guild.roles, name='Member')
 
-        await AP.add_roles(memberRole)
-        await message.channel.send('Role give')
+        await AP.add_roles(BP)
+        await message.channel.send(f'Role given to {AP.mention} Added role: {BP.name}')
 
+    if message.content.startswith('$Remove'):
+        CP = await message.guild.fetch_member(message.raw_mentions[0])
+        DP = message.guild.get_role(message.raw_role_mentions[0])
+        guild = message.guild
 
+        # memberRole = discord.utils.get(guild.roles, name='Member')
 
+        await CP.remove_roles(DP)
+        # await message.channel.send(f'Role given to {AP.display_name}')
+        await message.channel.send(f'Role removed from {CP.mention} Removed Role: {DP.name}')
+
+    # if message.content == 'idk':
+        # await message.channel.send(f'{bot.fetch_user_profile.hypersquad_houses}')
 
 
 
@@ -942,46 +954,6 @@ async def on_guild_role_update(before, after):
                     if channel.name == 'audit-log':
                         await channel.send(embed=embed)
 
-# @bot.command(pass_context=True)
-# async def chnick(ctx, member: discord.Member, nick):
-#     await member.edit(nick=nick)
-#     await ctx.send(f'Nickname was changed for {member.mention} ')
-#
-# @bot.event
-# async def on_ready():
-#     with open('users.json', 'r') as f:
-#         users = json.load(f)
-#
-#     await update_data(users, member)
-#
-#     with open('users.json', 'w') as f:
-#         json.dump(users, f)
-#
-# @bot.event
-# async def on_message(message):
-#     with open('users.json', 'r') as f:
-#         users = json.load(f)
-#
-#     await update_data(users, message.author)
-#     await add_experience(users, message.author, 5)
-#     await level_up(users, message.author, message.channel)
-#
-#     with open('users.json', 'w') as f:
-#         json.dump(users, f)
-#
-# async def update_data(users, user):
-#     if not user.id in users:
-#         users[user.id] = {}
-#         users[user.id]['experience'] = 0
-#         users[user.id]['level'] = 1
-#
-# async def add_experience(users, user, exp):
-#     user[user.id]['experience'] += exp
-#
-# async def level_up(users, user, channel):
-#     experience = users[user.id]['experience']
-#     lvl_start = users[user.id]['level']
-#     level_end = int(experience ** 1/4)
 
 
 bot.run(TOKEN)
