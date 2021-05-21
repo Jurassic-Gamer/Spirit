@@ -161,6 +161,17 @@ async def on_message(message):
         await message.channel.send(content=None, embed=embed)
 
 
+    if message.content.startswith('$Poll'):
+        ik = message.guild.get_channel(message.raw_channel_mentions[0])
+
+        message_array10 = message.content[27:]
+        embed = discord.Embed(title="A Poll Has Been Created!", description="Please react with the reaction of your choice")
+        embed.add_field(name="Poll:", value=f'```{message_array10}```')
+        embed.set_footer(
+        text="Poll created by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+        icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+        await ik.send(content=None, embed=embed)
+
     if message.content == '$random number':
         await message.channel.send(f'This is your random number {random.randrange(100000)}')
 
@@ -197,7 +208,6 @@ async def on_message(message):
                 await mbr.send(f"You were unmuted in the server {guild.name}")
 
 
-
     if message.content.startswith('$Nick'):
         message_array5 = message.content[28:]
         oka = await message.guild.fetch_member(message.raw_mentions[0])
@@ -216,8 +226,8 @@ async def on_message(message):
         # seconds = 5
         for userRole in message.author.roles:
             if userRole.name == 'Admin':
-                await huh.edit(slowmode_delay=600)
-                await message.channel.send(f'Slow mode has been enabled! Channel: {huh}')
+                await huh.edit(slowmode_delay=1800)
+                await message.channel.send(f'Slow mode has been enabled! Channel: {huh} for 30 minutes.')
 
 
 
@@ -368,6 +378,21 @@ async def on_message(message):
                 for webhook in webhooks:
                         await webhook.delete()
 
+    if message.content.startswith('Ann'):
+
+        for userRole in message.author.roles:
+            if userRole.name == 'Admin':
+
+                message_array9 = message.content[26:]
+                mehhh = await message.guild.fetch_member(message.raw_mentions[0])
+                webhook = await message.channel.create_webhook(name="Annoucement Bot")
+                await message.channel.purge(limit=1)
+                await webhook.send(
+                    str(message_array9), username="Annoucement Bot", avatar_url=mehhh.avatar_url)
+
+                webhooks = await message.channel.webhooks()
+                for webhook in webhooks:
+                        await webhook.delete()
 
 
     empty_array = []
