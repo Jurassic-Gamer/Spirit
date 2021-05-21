@@ -338,6 +338,11 @@ async def on_message(message):
             icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
         await message.channel.send(content=None, embed=embed)
 
+    if message.content.startswith('$Remind'):
+        guild = message.guild
+        message_array11 = int(message.content[8:])
+        await asyncio.sleep(message_array11)
+        await message.channel.send(f'You are being reminded {message.author.mention}')
 
     if message.content.startswith('$Server info'):
         owner = str(message.guild.owner)
