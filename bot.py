@@ -5,7 +5,7 @@ import random
 from random import randint
 
 import discord
-from discord import Embed
+from discord import Embed, user
 from discord.ext import commands
 from discord_slash import SlashCommand
 from discord_slash.utils.manage_commands import create_option
@@ -22,13 +22,17 @@ bot = commands.Bot(command_prefix="$", description="Spirit Bot. Initialized", in
 slash = SlashCommand(bot, sync_commands=True) # Declares slash commands through the␣
 
 
-guild_ids=[844733913011060779, ]#, 843302697486647316, 839567563544461372]
+guild_ids=[844963697709547521, 844733913011060779, 844759811651928124]
+
+#
+# @slash.slash(name="Ping", description="Finds the bot latency. In Ping Pong! 🏓", guild_ids=guild_ids)
+# async def _ping(ctx):  # Defines a new "context" (ctx) command called "ping."
+#     await ctx.send(f"Pong! ({bot.latency * 1000}ms)")
 
 
 @slash.slash(name="Ping", description="Finds the bot latency. In Ping Pong! 🏓", guild_ids=guild_ids)
 async def _ping(ctx):  # Defines a new "context" (ctx) command called "ping."
     await ctx.send(f"Pong! ({bot.latency * 1000}ms)")
-
 
 @slash.slash(name="say", description="Says what you want the bot to say", guild_ids=guild_ids)
 async def _say(ctx, message):
@@ -66,10 +70,10 @@ async def _pick(ctx, choice1="head", choice2="tail"): # Command with 1 or more a
     ch_str = str(ch)
     await ctx.send(content=ch_str)
 
-
-@slash.slash(name="Help", description="This is just a link to the list of command for the bot.", guild_ids=guild_ids)
-async def help(ctx):
-  await ctx.send(content="https://bit.ly/3uVdQqK")
+#
+# @slash.slash(name="Help", description="This is just a link to the list of command for the bot.", guild_ids=guild_ids)
+# async def help(ctx):
+#   await ctx.send(content="https://bit.ly/3uVdQqK")
 
 
 
@@ -88,6 +92,7 @@ async def on_message(message):
         embed.add_field(name="Audit-Log", value='Type ```$help audit``` to trigger the help command')
         embed.add_field(name="Fun", value='Type ```$help fun``` to trigger the help command')
         embed.add_field(name="Modmail", value='Type ```$help modmail``` to trigger the help command')
+        embed.add_field(name="Slash commands", value='Type ```/``` to view the bots slash command!')
         embed.set_footer(
             text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
             icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
@@ -102,6 +107,7 @@ async def on_message(message):
         embed.add_field(name="$Purge", value='```$Purge```, To delete 10 messages at a time in txt channel. ')
         embed.add_field(name="$slowmode", value='```Type `$slowmode [#channel-name]```  This is a command to enable only 5 seconds slow mode onto a channel.')
         embed.add_field(name="$kick", value='```$kick [@user] [reason]```  Use this command to kick members. ')
+        embed.add_field(name="$warn", value='```$warn [user] [reason]``` to trigger warn a user.')
         embed.add_field(name="Requirements", value='Must have ```Administrator``` Permissions. ')
         embed.set_footer(
             text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
@@ -210,8 +216,10 @@ async def on_message(message):
         # seconds = 5
         for userRole in message.author.roles:
             if userRole.name == 'Admin':
-                await huh.edit(slowmode_delay=5)
-                await message.channel.send('Slow mode has been enabled!')
+                await huh.edit(slowmode_delay=600)
+                await message.channel.send(f'Slow mode has been enabled! Channel: {huh}')
+
+
 
 
     if message.content.startswith('$unmute'):
@@ -309,6 +317,9 @@ async def on_message(message):
         await mhm.send(f"You were warned in a server: {guild.name} for {message_array3}")
 
 
+    # if message.content
+
+
 
     if message.content.startswith('say'):
 
@@ -326,19 +337,37 @@ async def on_message(message):
                 for webhook in webhooks:
                         await webhook.delete()
 
+
+
     empty_array = []
     modmail_channel = discord.utils.get(bot.get_all_channels(), name="modmail")
-
+#     # Modmail_User_ID = await message.guild.get_member(id)
+#     ID1 = message.author.id
+# # modChannel = await message.dm_channel.fetch_message
+    message_array8 = message.content[7:]
+#     member_id = message.author.id
+#     # MrID = discord.Object(ID1=int(id))
+#     MRID = await message.guild.fetch_member(member_id)
 
     if str(message.channel.type) == "private":
-        for guild in bot.guilds:
-            for channel in guild.channels:
-                if channel.name == 'modmail':
-                    embed = discord.Embed(title="Question reported!", description=f"Message ID: {message.id}.")
-                    embed.add_field(name="Question content:", value=message.content)
-                    embed.set_thumbnail(url=message.author.avatar_url)
-                    embed.set_footer(text="Question request by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
-                    await channel.send(content=None, embed=embed)
+        # for guild in bot.guilds:
+        #     for channel in guild.channels:
+        #         if channel.name == 'modmail':
+        channel = bot.get_channel(844964247979950090)
+        # bruh = await message.guild.fetch_channel(844964247979950090)
+        embed = discord.Embed(title="Question reported!", description=f"Author ID: {message.author.id}.")
+        embed.add_field(name="Question content:", value=message.content)
+        embed.set_thumbnail(url=message.author.avatar_url)
+        embed.set_footer(text="Question request by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+        await channel.send(content=None, embed=embed)
+        member1 = message.author
+        await message.author.send(f"Hello {member1.mention} This is an automated response for the modmail report system. Please provide your full user name below.\n Please note: When you type your full user_name again this message will appear again. Please ignore it if you have already provided your tag \n EX: Wumpus#0001")
+        await asyncio.sleep(30)
+        await message.author.send('Thank you. You will recieve a Dm soon from one of our staff.')
+
+    elif message.content == '$reply':
+        await message.author.send(f"{message_array8}")
+
 
     elif str(message.channel) == "modmail" and message.content.startswith("<"):
         if len(message.mentions) > 0:
@@ -446,6 +475,7 @@ async def on_member_join(member):
 
 
 
+
 #
 # @bot.command(aliases=['8ball', 'test'])
 # async def _8ball(ctx, *, question):
@@ -514,14 +544,17 @@ async def on_member_join(member):
     await channel.send(welcome_message)
     print(f"{member} has joined the server")
 
-@bot.event
-async def on_member_remove(member):
-
-    b = [f"{member} has just left the server :(", f"{member} just left we hope you had a good time.", f"Oh no {member} has left the server.", f"{member} has just left. Come back soon! :')"]
-    leave_message = b[randint(0, 1)]
-    channel = discord.utils.get(member.guild.channels, name='welcome-and-leave')
-    await channel.send(leave_message)
-    print(f"{member} has just left the server")
+    role = discord.utils.get(member.guild.roles, name='Member')
+    await member.add_roles(role)
+#
+# @bot.event
+# async def on_member_remove(member):
+#
+#     b = [f"{member} has just left the server :(", f"{member} just left we hope you had a good time.", f"Oh no {member} has left the server.", f"{member} has just left. Come back soon! :')"]
+#     leave_message = b[randint(0, 1)]
+#     channel = discord.utils.get(member.guild.channels, name='welcome-and-leave')
+#     await channel.send(leave_message)
+#     print(f"{member} has just left the server")
 
 
 @bot.event
