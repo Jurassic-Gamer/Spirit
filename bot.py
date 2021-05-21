@@ -385,6 +385,17 @@ async def on_message(message):
 
         # await message.channel.send(f'{IDC.name}, {lol.id}, {lol.color}')
 
+    if message.content.startswith('$Give'):
+        AP = await message.guild.fetch_member(message.raw_mentions[0])
+        guild = message.guild
+
+        memberRole = discord.utils.get(guild.roles, name='Member')
+
+        await AP.add_roles(memberRole)
+        await message.channel.send('Role give')
+
+
+
 
 
 
