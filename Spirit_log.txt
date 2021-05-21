@@ -1,0 +1,3 @@
+Day 1. I have created a user info feature. It works as such: $User info {@user}
+It has been very fun indeed. I am trying to figure out how I should create a
+role info and a server info.
