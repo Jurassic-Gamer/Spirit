@@ -344,7 +344,7 @@ async def on_message(message):
         id = str(message.guild.id)
         region = str(message.guild.region)
         memberCount = str(message.guild.member_count)
-
+#Type Server info to see the info
         icon = str(message.guild.icon_url)
 
         embed = discord.Embed(title=f"Guild info", description=f"{message.guild.name}, {id}")
