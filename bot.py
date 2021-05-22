@@ -6,7 +6,7 @@ import random
 from random import randint
 
 import discord
-from discord import Embed, user, member, message
+from discord import Embed, user, member, message, Spotify
 from discord.ext import commands
 from discord_slash import SlashCommand
 from discord_slash.utils.manage_commands import create_option
@@ -396,8 +396,21 @@ async def on_message(message):
     #         if userRole.name == 'Support':
     #             await message.channel.category.delete()
     #             await message.channel.delete()
+    #
+    # if message.content.startswith('$Activity'):
+    #
+    #     AI = await message.guild.fetch_member(message.raw_mentions[0])
+    #     guild = message.guild
+    #     await message.channel.send(f"{message.author.display_name} is listening to {message.author.spotify.album} {message.author.spotify.name}")
+    #     # user = user or message.author
+    #     # for activity in user.activities:
+    #     #     if isinstance(activity, Spotify):
+    #     #         await message.channel.send(f"{user} is listening to {activity.title} by {activity.artist}")
 
-
+    if message.content == '$Typing':
+        typing = message.channel.trigger_typing()
+        await typing
+        await message.channel.send('I WAS TYPING')
 
     if message.content.startswith('$User info'):
 
@@ -406,7 +419,15 @@ async def on_message(message):
 
         embed = discord.Embed(title=f"User info {IDC.mention}", description=f"{IDC.display_name}")
         embed.add_field(name=f"{IDC.display_name} was created at:", value=f'{IDC.created_at}')
-        embed.add_field(name=f"{IDC.display_name} is in these same guilds as me:", value=f'{IDC.mutual_guilds}')
+        embed.add_field(name=f"Is {IDC.display_name} a bot?:", value=f'{IDC.bot}')
+        # embed.add_field(name=f"{IDC.display_name} status:", value=f'{IDC.desktop_status}')
+        embed.add_field(name=f"{IDC.display_name} permissions:", value=f'{IDC.guild_permissions}')
+        embed.add_field(name=f"When {IDC.display_name} joined:", value=f'{IDC.joined_at}')
+        embed.add_field(name=f"{IDC.display_name} has had nitro since:", value=f'{IDC.premium_since}')
+        embed.add_field(name=f"{IDC.display_name}'s best role:", value=f'{IDC.top_role}')
+        embed.add_field(name=f"{IDC.display_name}'s activity:", value=f'{IDC.activity}')
+        embed.add_field(name=f"{IDC.display_name}'s color:", value=f'{IDC.color}')
+        # embed.add_field(name=f"{IDC.display_name} is in these same guilds as me:", value=f'{IDC.mutual_guilds}')
         embed.set_footer(
             text="Asked by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
             icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
@@ -426,15 +447,20 @@ async def on_message(message):
         memberCount = str(message.guild.member_count)
 #Type Server info to see the info
         icon = str(message.guild.icon_url)
+        rules = str(message.guild.rules_channel)
+        verification_level = message.guild.verification_level
 
         embed = discord.Embed(title=f"Guild info", description=f"{message.guild.name}, {id}")
+        embed.add_field(name=f"{message.guild.name} was created at:", value=f'{message.guild.created_at}')
+        embed.add_field(name=f"{message.guild.name} verification level:", value=f'{verification_level}')
+        embed.add_field(name=f"{message.guild.name} rules channel:", value=f'{rules}')
         embed.add_field(name=f"{message.guild.name} was created at:", value=f'{message.guild.created_at}')
         embed.add_field(name=f"{message.guild.name}'s owner is:", value=f'{owner}')
         embed.add_field(name=f"{message.guild.name} has this many members", value=f'{memberCount}')
         embed.add_field(name=f"{message.guild.name} is residented in", value=f'{region}')
         embed.set_footer(
             text="Asked by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
-            icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+            icon_url=icon)  # + " " + datetime.datetime.utcnow())
         await message.channel.send(content=None, embed=embed)
         # embed = discord.Embed(
         #     title=name + " Server Information",
@@ -509,16 +535,8 @@ async def on_message(message):
         await mes12.edit(content="Extraction at 100%")
         await asyncio.sleep(3)
         await mes12.edit(content="Hack complete.")
-        await asyncio.sleep(10)
+        await asyncio.sleep(5)
         await mes12.edit(content="https://tenor.com/view/traffic-fbi-open-up-raid-gif-13450966")
-
-
-
-
-
-
-
-
 
 
     if message.content.startswith('$Give'):
@@ -1092,6 +1110,7 @@ async def on_guild_role_update(before, after):
                 for channel in guild.channels:
                     if channel.name == 'audit-log':
                         await channel.send(embed=embed)
+
 
 
 
