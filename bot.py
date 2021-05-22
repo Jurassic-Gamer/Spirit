@@ -6,7 +6,7 @@ import random
 from random import randint
 
 import discord
-from discord import Embed, user, member
+from discord import Embed, user, member, message
 from discord.ext import commands
 from discord_slash import SlashCommand
 from discord_slash.utils.manage_commands import create_option
@@ -123,6 +123,7 @@ async def on_message(message):
         embed.add_field(name="$Server info", value='```Type `$Server info``` Gets some kinda- helpful server info')
         embed.add_field(name="$Invite", value='```$Invite``` Sends a Dm containing the link to invite')
         embed.add_field(name="$Support", value='```$Support``` This is to get support for the bot')
+        embed.add_field(name="$new", value='```$new``` this is ONLY if you have a question.')
         embed.set_footer(
             text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
             icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
@@ -176,20 +177,23 @@ async def on_message(message):
 
 
     if message.content.startswith('$Poll'):
+
         ik = message.guild.get_channel(message.raw_channel_mentions[0])
 
-        message_array10 = message.content[27:]
-        embed = discord.Embed(title="A Poll Has Been Created!", description="Please react with the reaction of your choice")
-        embed.add_field(name="Poll:", value=f'```{message_array10}```')
-        embed.set_footer(
-        text="Poll created by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
-        icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
-        await ik.send(content=None, embed=embed)
+        for userRole in message.author.roles:
+            if userRole.name == 'Jr. Moderator':
+                message_array10 = message.content[27:]
+                embed = discord.Embed(title="A Poll Has Been Created!", description="Please react with the reaction of your choice")
+                embed.add_field(name="Poll:", value=f'```{message_array10}```')
+                embed.set_footer(
+                text="Poll created by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+                icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+                await ik.send(content=None, embed=embed)
 
     if message.content == '$random number':
         await message.channel.send(f'This is your random number {random.randrange(100000)}')
 
-    if message.content == '$Support':\
+    if message.content == '$Support':
         await message.channel.send(f'Click here to join the support server: https://discord.gg/avknX8v7X7')
 
     if message.content.startswith('$mute'):
@@ -235,20 +239,26 @@ async def on_message(message):
                 await oka.send(f"Your nickname was changed in a server: {guild.name} for {message_array5}")
 
     if message.content.startswith('$slowmode'):
-        message_array6 = message.content[12:]
+        # message_array6 = message.content[12:]
         huh = message.guild.get_channel(message.raw_channel_mentions[0])
+        time = message.content[32:]
         # huh = discord.utils.get(message.raw_channel_mentions[0])
         guild = message.guild
         # seconds = 5
         for userRole in message.author.roles:
             if userRole.name == 'Admin':
-                await huh.edit(slowmode_delay=1800)
-                await message.channel.send(f'Slow mode has been enabled! Channel: {huh} for 30 minutes.')
+                await huh.edit(slowmode_delay=time)
+                await message.channel.send(f'Slow mode has been enabled! Channel: {huh} for {time} seconds.')
 
     if message.content == '$Invite':
         await message.channel.send(f'I sent you a private message {message.author.mention}')
         await message.author.create_dm()
         await message.author.dm_channel.send('Invite me by clicking here: https://bit.ly/3f5foc9')
+
+    if message.content == '$Delete channel':
+        for userRole in message.author.roles:
+            if userRole.name == 'Moderator':
+                await message.channel.delete()
 
 
     if message.content.startswith('$unmute'):
@@ -355,12 +365,37 @@ async def on_message(message):
                                                    position=None)
         message_array13 = message.content[10:]
         Cool_channel = await Cool.create_text_channel(name=f"{message.author.display_name}", overwrites=None, reason=None)
-        await Cool_channel.send('Hello')
+        embed = discord.Embed(title=f"{message.author.display_name} has asked a question", description=f"Sender ID {message.author.id}")
+        embed.add_field(name=f"Question Content:", value=f'{message_array13}')
+        embed.set_footer(text="Question request by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+        await Cool_channel.send(content=None, embed=embed)
         # await Cool_channel.send
 
     if message.content.startswith('$Close'):
-        await message.channel.category.delete()
-        await message.channel.delete()
+
+        for userRole in message.author.roles:
+            if userRole.name == 'Support':
+                await message.channel.category.delete()
+                await message.channel.delete()
+
+
+
+    if message.content.startswith('$reply'):
+        message_array14 = message.content[25:]
+        cook = await message.guild.fetch_member(message.raw_mentions[0])
+        embed = discord.Embed(title="Question Answered!:", description="Question Answered. User Please Check")
+        embed.add_field(name="Question Answer:", value=message.content)
+        embed.set_footer(text="Answered by:" + " " + message.author.display_name)
+        embed.set_thumbnail(url=message.author.avatar_url)
+        embed.set_footer(text="Answered by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+        await cook.send(content=None, embed=embed)
+
+    # if message.content.startswith('$Close'):
+    #
+    #     for userRole in message.author.roles:
+    #         if userRole.name == 'Support':
+    #             await message.channel.category.delete()
+    #             await message.channel.delete()
 
 
 
@@ -435,10 +470,11 @@ async def on_message(message):
         BP = message.guild.get_role(message.raw_role_mentions[0])
         guild = message.guild
 
-        # memberRole = discord.utils.get(guild.roles, name='Member')
+        for userRole in message.author.roles:
+            if userRole.name == 'Moderator':
 
-        await AP.add_roles(BP)
-        await message.channel.send(f'Role given to {AP.mention} Added role: {BP.name}')
+                await AP.add_roles(BP)
+                await message.channel.send(f'Role given to {AP.mention} Added role: {BP.name}')
 
     if message.content.startswith('$Remove'):
         CP = await message.guild.fetch_member(message.raw_mentions[0])
@@ -447,9 +483,11 @@ async def on_message(message):
 
         # memberRole = discord.utils.get(guild.roles, name='Member')
 
-        await CP.remove_roles(DP)
-        # await message.channel.send(f'Role given to {AP.display_name}')
-        await message.channel.send(f'Role removed from {CP.mention} Removed Role: {DP.name}')
+        for userRole in message.author.roles:
+            if userRole.name == 'Moderator':
+                await CP.remove_roles(DP)
+                # await message.channel.send(f'Role given to {AP.display_name}')
+                await message.channel.send(f'Role removed from {CP.mention} Removed Role: {DP.name}')
 
     # if message.content == 'idk':
         # await message.channel.send(f'{bot.fetch_user_profile.hypersquad_houses}')
@@ -489,50 +527,50 @@ async def on_message(message):
                         await webhook.delete()
 
 
-    empty_array = []
-    modmail_channel = discord.utils.get(bot.get_all_channels(), name="modmail")
-#     # Modmail_User_ID = await message.guild.get_member(id)
-#     ID1 = message.author.id
-# # modChannel = await message.dm_channel.fetch_message
-    message_array8 = message.content[7:]
-#     member_id = message.author.id
-#     # MrID = discord.Object(ID1=int(id))
-#     MRID = await message.guild.fetch_member(member_id)
-
-    if str(message.channel.type) == "private":
-        # for guild in bot.guilds:
-        #     for channel in guild.channels:
-        #         if channel.name == 'modmail':
-        channel = bot.get_channel(844964247979950090)
-        # bruh = await message.guild.fetch_channel(844964247979950090)
-        embed = discord.Embed(title="Question reported!", description=f"Author ID: {message.author.id}.")
-        embed.add_field(name="Question content:", value=message.content)
-        embed.set_thumbnail(url=message.author.avatar_url)
-        embed.set_footer(text="Question request by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
-        await channel.send(content=None, embed=embed)
-        member1 = message.author
-        await message.author.send(f"Hello {member1.mention} This is an automated response for the modmail report system. Please provide your full user name below.\n Please note: When you type your full user_name again this message will appear again. Please ignore it if you have already provided your tag \n EX: #0001")
-
-
-    elif str(message.channel) == "modmail" and message.content.startswith("<"):
-        if len(message.mentions) > 0:
-            member_object = message.mentions[0]
-            if message.attachments != empty_array:
-                files = message.attachments
-                await member_object.send("•" + message.author.display_name + "•")
-                for file in files:
-                    await member_object.send(file.url)
-            else:
-                index = message.content.index(" ")
-                string = message.content
-                mod_message = string[index:]
-
-            embed = discord.Embed(title="Question Answered!:", description="Question Answered. Member Please Check")
-            embed.add_field(name="Question Answer:", value=message.content)
-            embed.set_footer(text="Answered by:" + " " + message.author.display_name)
-            embed.set_thumbnail(url=message.author.avatar_url)
-            embed.set_footer(text="Answered by:" + " " + message.author.display_name, icon_url=message.author.avatar_url)
-            await member_object.send(content=None, embed=embed)
+#     empty_array = []
+#     modmail_channel = discord.utils.get(bot.get_all_channels(), name="modmail")
+# #     # Modmail_User_ID = await message.guild.get_member(id)
+# #     ID1 = message.author.id
+# # # modChannel = await message.dm_channel.fetch_message
+#     message_array8 = message.content[7:]
+# #     member_id = message.author.id
+# #     # MrID = discord.Object(ID1=int(id))
+# #     MRID = await message.guild.fetch_member(member_id)
+#
+#     if str(message.channel.type) == "private":
+#         # for guild in bot.guilds:
+#         #     for channel in guild.channels:
+#         #         if channel.name == 'modmail':
+#         channel = bot.get_channel(844964247979950090)
+#         # bruh = await message.guild.fetch_channel(844964247979950090)
+#         embed = discord.Embed(title="Question reported!", description=f"Author ID: {message.author.id}.")
+#         embed.add_field(name="Question content:", value=message.content)
+#         embed.set_thumbnail(url=message.author.avatar_url)
+#         embed.set_footer(text="Question request by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+#         await channel.send(content=None, embed=embed)
+#         member1 = message.author
+#         await message.author.send(f"Hello {member1.mention} This is an automated response for the modmail report system. Please provide your full user name below.\n Please note: When you type your full user_name again this message will appear again. Please ignore it if you have already provided your tag \n EX: #0001")
+#
+#
+#     elif str(message.channel) == "modmail" and message.content.startswith("<"):
+#         if len(message.mentions) > 0:
+#             member_object = message.mentions[0]
+#             if message.attachments != empty_array:
+#                 files = message.attachments
+#                 await member_object.send("•" + message.author.display_name + "•")
+#                 for file in files:
+#                     await member_object.send(file.url)
+#             else:
+#                 index = message.content.index(" ")
+#                 string = message.content
+#                 mod_message = string[index:]
+#
+#             embed = discord.Embed(title="Question Answered!:", description="Question Answered. Member Please Check")
+#             embed.add_field(name="Question Answer:", value=message.content)
+#             embed.set_footer(text="Answered by:" + " " + message.author.display_name)
+#             embed.set_thumbnail(url=message.author.avatar_url)
+#             embed.set_footer(text="Answered by:" + " " + message.author.display_name, icon_url=message.author.avatar_url)
+#             await member_object.send(content=None, embed=embed)
 
 
 
