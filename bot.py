@@ -91,6 +91,7 @@ async def on_message(message):
         embed.add_field(name="Fun", value='Type ```$help fun``` to trigger the help command')
         embed.add_field(name="Modmail", value='Type ```$help modmail``` to trigger the help command')
         embed.add_field(name="Slash commands", value='Type ```/``` to view the bots slash command!')
+        embed.add_field(name="General", value='Type ```$help general``` to trigger the help command!')
         embed.set_footer(
             text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
             icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
@@ -107,6 +108,21 @@ async def on_message(message):
         embed.add_field(name="$kick", value='```$kick [@user] [reason]```  Use this command to kick members. ')
         embed.add_field(name="$warn", value='```$warn [user] [reason]``` to trigger warn a user.')
         embed.add_field(name="Requirements", value='Must have ```Administrator``` Permissions. ')
+        embed.set_footer(
+            text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+            icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+        await message.channel.send(content=None, embed=embed)
+
+    if message.content == '$help general':
+
+
+        embed = discord.Embed(title="Spirit Help General Commands!", description="General commands")
+        embed.add_field(name="$Remind", value='```$Remind [Amount (In seconds)].``` A General reminder command.')
+        embed.add_field(name="$Poll", value='```$Poll [question]``` This will help collect data in your server ')
+        embed.add_field(name="$User info", value='```$User info [@mention]```, Gets information about a user ')
+        embed.add_field(name="$Server info", value='```Type `$Server info``` Gets some kinda- helpful server info')
+        embed.add_field(name="$Invite", value='```$Invite``` Sends a Dm containing the link to invite')
+        embed.add_field(name="$Support", value='```$Support``` This is to get support for the bot')
         embed.set_footer(
             text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
             icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
@@ -173,6 +189,8 @@ async def on_message(message):
     if message.content == '$random number':
         await message.channel.send(f'This is your random number {random.randrange(100000)}')
 
+    if message.content == '$Support':\
+        await message.channel.send(f'Click here to join the support server: https://discord.gg/avknX8v7X7')
 
     if message.content.startswith('$mute'):
 
@@ -227,7 +245,10 @@ async def on_message(message):
                 await huh.edit(slowmode_delay=1800)
                 await message.channel.send(f'Slow mode has been enabled! Channel: {huh} for 30 minutes.')
 
-
+    if message.content == '$Invite':
+        await message.channel.send(f'I sent you a private message {message.author.mention}')
+        await message.author.create_dm()
+        await message.author.dm_channel.send('Invite me by clicking here: https://bit.ly/3f5foc9')
 
 
     if message.content.startswith('$unmute'):
@@ -325,6 +346,9 @@ async def on_message(message):
         await mhm.send(f"You were warned in a server: {guild.name} for {message_array3}")
 
 
+
+
+
     if message.content.startswith('$User info'):
 
         IDC = await message.guild.fetch_member(message.raw_mentions[0])
@@ -356,6 +380,7 @@ async def on_message(message):
         embed.add_field(name=f"{message.guild.name} was created at:", value=f'{message.guild.created_at}')
         embed.add_field(name=f"{message.guild.name}'s owner is:", value=f'{owner}')
         embed.add_field(name=f"{message.guild.name} has this many members", value=f'{memberCount}')
+        embed.add_field(name=f"{message.guild.name} is residented in", value=f'{region}')
         embed.set_footer(
             text="Asked by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
             icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
