@@ -415,6 +415,7 @@ async def on_message(message):
     if message.content.startswith('$Remind'):
         guild = message.guild
         message_array11 = int(message.content[8:])
+        await message.channel.send(f"Hello {message.author.name} you will be reminded in {message_array11} seconds.")
         await asyncio.sleep(message_array11)
         await message.channel.send(f'You are being reminded {message.author.mention}')
 
@@ -465,6 +466,61 @@ async def on_message(message):
 
         # await message.channel.send(f'{IDC.name}, {lol.id}, {lol.color}')
 
+    if message.content == 'Hi':
+        channel1 = bot.get_channel(844963697709547524)
+        # await message.channel.send('H')
+        mes12 = await message.channel.send("The hacking process has beginning in 5")
+        await asyncio.sleep(1)
+        await mes12.edit(content="The hacking process has beginning in 4")
+        await asyncio.sleep(1)
+        await mes12.edit(content="The hacking process has beginning in 3")
+        await asyncio.sleep(1)
+        await asyncio.sleep(1)
+        await mes12.edit(content="The hacking process has beginning in 2")
+        await asyncio.sleep(1)
+        await mes12.edit(content="The hacking process has beginning in 1")
+        await asyncio.sleep(1)
+        await mes12.edit(content="Going through history. How to protect against hackers found.")
+        await asyncio.sleep(2)
+        await mes12.edit(content="Installing Core Operating System.VIRUS")
+        await asyncio.sleep(2)
+        await mes12.edit(content="Deleting anti hacking internal systems")
+        await asyncio.sleep(2)
+        await mes12.edit(content="Email comprimised")
+        await asyncio.sleep(2)
+        await mes12.edit(content="Locating IP Address.")
+        await asyncio.sleep(1)
+        await mes12.edit(content="Locating IP Address..")
+        await asyncio.sleep(1)
+        await mes12.edit(content="Locating IP Address...")
+        await asyncio.sleep(1)
+        await mes12.edit(content="IP Address located. 169.173.207.1")
+        await asyncio.sleep(1)
+        await mes12.edit(content="Sending military unit 1 to 169.173.207.1.")
+        await asyncio.sleep(1)
+        await mes12.edit(content="Extraction at 24%")
+        await asyncio.sleep(2)
+        await mes12.edit(content="Extraction at 52%")
+        await asyncio.sleep(2)
+        await mes12.edit(content="Extraction at 77%")
+        await asyncio.sleep(2)
+        await mes12.edit(content="Extraction at 91%")
+        await asyncio.sleep(2)
+        await mes12.edit(content="Extraction at 100%")
+        await asyncio.sleep(3)
+        await mes12.edit(content="Hack complete.")
+        await asyncio.sleep(10)
+        await mes12.edit(content="https://tenor.com/view/traffic-fbi-open-up-raid-gif-13450966")
+
+
+
+
+
+
+
+
+
+
     if message.content.startswith('$Give'):
         AP = await message.guild.fetch_member(message.raw_mentions[0])
         BP = message.guild.get_role(message.raw_role_mentions[0])
@@ -496,19 +552,19 @@ async def on_message(message):
 
     if message.content.startswith('say'):
 
-        for userRole in message.author.roles:
-            if userRole.name == 'Admin':
+        # for userRole in message.author.roles:
+        #     if userRole.name == 'Admin':
 
-                message_array4 = message.content[26:]
-                oki = await message.guild.fetch_member(message.raw_mentions[0])
-                webhook = await message.channel.create_webhook(name=oki.display_name)
-                await message.channel.purge(limit=1)
-                await webhook.send(
-                    str(message_array4), username=oki.display_name, avatar_url=oki.avatar_url)
+        message_array4 = message.content[26:]
+        oki = await message.guild.fetch_member(message.raw_mentions[0])
+        webhook = await message.channel.create_webhook(name=oki.display_name)
+        await message.channel.purge(limit=1)
+        await webhook.send(
+            str(message_array4), username=oki.display_name, avatar_url=oki.avatar_url)
 
-                webhooks = await message.channel.webhooks()
-                for webhook in webhooks:
-                        await webhook.delete()
+        webhooks = await message.channel.webhooks()
+        for webhook in webhooks:
+                await webhook.delete()
 
     if message.content.startswith('Ann'):
 
