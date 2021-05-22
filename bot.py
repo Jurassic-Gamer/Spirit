@@ -345,7 +345,22 @@ async def on_message(message):
         await message.channel.send(f"Warned {mhm.mention} for reason {message_array3}")
         await mhm.send(f"You were warned in a server: {guild.name} for {message_array3}")
 
+    if message.content == '$new':
+        await message.channel.send(f'Success! Please answer these questions: In the channel questions')
+        channel1 = bot.get_channel(845456242587729931)
+        await message.channel.send('Please provide your questions here in the format: ```Question: [question]```')
 
+    if message.content.startswith('Question:'):
+        Cool = await message.guild.create_category(name=f"{message.author.name}'s ticket", overwrites=None, reason=None,
+                                                   position=None)
+        message_array13 = message.content[10:]
+        Cool_channel = await Cool.create_text_channel(name=f"{message.author.display_name}", overwrites=None, reason=None)
+        await Cool_channel.send('Hello')
+        # await Cool_channel.send
+
+    if message.content.startswith('$Close'):
+        await message.channel.category.delete()
+        await message.channel.delete()
 
 
 
