@@ -1,3 +1,6 @@
 Day 1. I have created a user info feature. It works as such: $User info {@user}
 It has been very fun indeed. I am trying to figure out how I should create a
 role info and a server info.
+
+Day 2. I have now made the remind feature. Simple type $Remind [time]
+As for the slowmode feature it is now a custom time! Type $slowmode [#channel-name] [amount in seconds]
