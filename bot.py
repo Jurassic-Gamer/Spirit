@@ -120,10 +120,14 @@ async def on_message(message):
         embed.add_field(name="$Remind", value='```$Remind [Amount (In seconds)].``` A General reminder command.')
         embed.add_field(name="$Poll", value='```$Poll [question]``` This will help collect data in your server ')
         embed.add_field(name="$User info", value='```$User info [@mention]```, Gets information about a user ')
-        embed.add_field(name="$Server info", value='```Type `$Server info``` Gets some kinda- helpful server info')
+        embed.add_field(name="$Server info", value='```Type $Server info``` Gets some kinda- helpful server info')
         embed.add_field(name="$Invite", value='```$Invite``` Sends a Dm containing the link to invite')
-        embed.add_field(name="$Support", value='```$Support``` This is to get support for the bot')
+        # embed.add_field(name="$Support", value='```$Support``` This is to get support for the bot')
         embed.add_field(name="$new", value='```$new``` this is ONLY if you have a question.')
+        embed.add_field(name="$Close", value='```$Close``` Use this basic command to Close a ticket')
+        # embed.add_field(name="$Invite", value='```$Invite``` do this to invite the bot')
+        embed.add_field(name="$Support", value='```$Support``` to get the invite link to the support server')
+        embed.add_field(name="$new", value='```$reply``` This is the reply to a users $new command.')
         embed.set_footer(
             text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
             icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
@@ -492,9 +496,7 @@ async def on_message(message):
 
         # await message.channel.send(f'{IDC.name}, {lol.id}, {lol.color}')
 
-    if message.content == 'Hi':
-        channel1 = bot.get_channel(844963697709547524)
-        # await message.channel.send('H')
+    if message.content == '$Hack':
         mes12 = await message.channel.send("The hacking process has beginning in 5")
         await asyncio.sleep(1)
         await mes12.edit(content="The hacking process has beginning in 4")
