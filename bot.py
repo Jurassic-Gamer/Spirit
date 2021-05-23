@@ -376,7 +376,7 @@ async def on_message(message):
         # await Cool_channel.send
 
     if message.content.startswith('$Close'):
-
+        #
         for userRole in message.author.roles:
             if userRole.name == 'Support':
                 await message.channel.category.delete()
