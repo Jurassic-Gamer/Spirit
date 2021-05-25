@@ -6,11 +6,12 @@ import random
 from random import randint
 
 import discord
-from discord import Embed, user, member, message, Spotify
+from discord import Embed, message
 from discord.ext import commands
 from discord_slash import SlashCommand
 from discord_slash.utils.manage_commands import create_option
 from dotenv import load_dotenv
+
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -20,10 +21,12 @@ intents = discord.Intents.all()
 
 bot = commands.Bot(command_prefix="$", description="Spirit Bot. Initialized", case_insensitive=True, intents=intents)
 
-slash = SlashCommand(bot, sync_commands=True) # Declares slash commands through the␣
+
+slash = SlashCommand(bot, sync_commands=True) # Declares slash commands through the
 
 
-guild_ids=[844963697709547521, 844733913011060779, 844759811651928124]
+
+guild_ids=[844963697709547521, 844759830521577512, 844759811651928124]
 
 #
 # @slash.slash(name="Ping", description="Finds the bot latency. In Ping Pong! 🏓", guild_ids=guild_ids)
@@ -71,16 +74,54 @@ async def _pick(ctx, choice1="head", choice2="tail"): # Command with 1 or more a
     ch_str = str(ch)
     await ctx.send(content=ch_str)
 
-#
+
 # @slash.slash(name="Help", description="This is just a link to the list of command for the bot.", guild_ids=guild_ids)
-# async def help(ctx):
-#   await ctx.send(content="https://bit.ly/3uVdQqK")
+# async def add(ctx):
+#     variables = ctx.strip().split(' ')
+#     num1 = int(variables[1])
+#     num2 = int(variables[2])
+#     await ctx.send(num1 + num2)
+
+Blacklist101 = []
+with open('blacklist.txt', 'a+', encoding='utf-8') as i:
+  try:
+    # log.append(AuditData("a", "b", "c", "d", "e"))
+    for line in i:
+       (user_name) = line.split()
+       Blacklist101.append(user_name)
+  except Exception as e:
+    print(e)
+
+async def add_whitelist(message):
+
+    if message.content.startswith('Whitelist'):
+        sureee = await message.guild.fetch_member(message.raw_mentions[0])
+
+        with open('blacklist.txt', 'a+', encoding='utf-8') as i:
+            # try:
+
+                i.write(str(sureee.display_name) + "\n")
+                Blacklist101.append(str(sureee.display_name))
+                print('HELLO PEOPLE')
+            # except Exception as e:
+            #     print(e)
 
 
 @bot.event
 async def on_message(message):
-    if message.author == bot.user:
+    await add_whitelist(message)
+    # blacklist = {'CS|Cenzoic#5851', 'name2', 'name3'}
+
+    if message.author.display_name not in Blacklist101:
         return
+    # if message.author == bot.user:
+    #     return
+
+
+    # blacklist = {'CS|Cenzoic', 'name2', 'name3'}
+    #
+    # if message.author.name not in blacklist:
+    #     return
 
     if message.content == '$help':
 
@@ -92,6 +133,25 @@ async def on_message(message):
         embed.add_field(name="Modmail", value='Type ```$help modmail``` to trigger the help command')
         embed.add_field(name="Slash commands", value='Type ```/``` to view the bots slash command!')
         embed.add_field(name="General", value='Type ```$help general``` to trigger the help command!')
+        embed.colour = discord.embeds.Colour.random()
+
+        embed.set_footer(
+            text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+            icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+        await message.channel.send(content=None, embed=embed)
+
+    if message.content == '$info':
+
+
+        embed = discord.Embed(title="Shard stuff", description="Idk")
+        embed.add_field(name="Shard_count", value=f'{str(bot.shard_count)}')
+        embed.add_field(name="Audit-Log", value=f'{bot.shard_id}')
+        embed.add_field(name="Fun", value=f'{bot.is_ws_ratelimited()}')
+        # embed.add_field(name="Modmail", value='Type ```$help modmail``` to trigger the help command')
+        # embed.add_field(name="Slash commands", value='Type ```/``` to view the bots slash command!')
+        # embed.add_field(name="General", value='Type ```$help general``` to trigger the help command!')
+        embed.colour = discord.embeds.Colour.random()
+
         embed.set_footer(
             text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
             icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
@@ -107,6 +167,8 @@ async def on_message(message):
         embed.add_field(name="$slowmode", value='```Type `$slowmode [#channel-name]```  This is a command to enable only 5 seconds slow mode onto a channel.')
         embed.add_field(name="$kick", value='```$kick [@user] [reason]```  Use this command to kick members. ')
         embed.add_field(name="$warn", value='```$warn [user] [reason]``` to trigger warn a user.')
+        embed.colour = discord.embeds.Colour.random()
+
         embed.add_field(name="Requirements", value='Must have ```Administrator``` Permissions. ')
         embed.set_footer(
             text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
@@ -127,6 +189,8 @@ async def on_message(message):
         embed.add_field(name="$Close", value='```$Close``` Use this basic command to Close a ticket')
         # embed.add_field(name="$Invite", value='```$Invite``` do this to invite the bot')
         embed.add_field(name="$Support", value='```$Support``` to get the invite link to the support server')
+        embed.colour = discord.embeds.Colour.random()
+
         embed.add_field(name="$new", value='```$reply``` This is the reply to a users $new command.')
         embed.set_footer(
             text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
@@ -139,6 +203,7 @@ async def on_message(message):
 
         embed = discord.Embed(title="Spirit Help Audit Command!", description="Audit Commands")
         embed.add_field(name="On_message_events", value='Type ```$Audit-log``` to trigger the list of events it responds to')
+        embed.colour = discord.embeds.Colour.random()
         embed.add_field(name="Requirements", value='Must have a channel called ```audit-log``` ')
         embed.set_footer(
             text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
@@ -151,6 +216,7 @@ async def on_message(message):
         embed = discord.Embed(title="Spirit Help Modmail Command!", description="Modmail Commands")
         embed.add_field(name="Modmail", value='DM the bot with your question.')
         embed.add_field(name="Requirements", value='Must have a channel called ```Modmail``` ')
+        embed.colour = discord.embeds.Colour.random()
         embed.set_footer(
             text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
             icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
@@ -160,6 +226,7 @@ async def on_message(message):
 
         embed = discord.Embed(title="Audit-events", description="List of events bot audit-log responds to.")
         embed.add_field(name="Events:", value='```On_message_events``` ```On_member_join``` ```on_member_remove``` ```on_message_edit``` ```on_message_delete``` ```on_guild_channel_create``` ```on_guild_channel_delete``` ```on_guild_channels_pins_update``` ```on_webhook_update``` ```on_invite_create``` ```on_role_create``` ```on_role_delete``` ```on_role_update``` ')
+        embed.colour = discord.embeds.Colour.random()
 
         embed.set_footer(
             text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
@@ -174,25 +241,38 @@ async def on_message(message):
         embed.add_field(name="$Math", value='```$add [num1] [num2]```, ```$sub [num1] [num2]```, ```multiply [num1] [num2]```, ```divide [num1] [num2]```')
         embed.add_field(name="Who am I", value='```Who am I```, Well it says who you are! ')
         embed.add_field(name="$ping", value='```$ping```  Finds the bots latency')
+        embed.colour = discord.embeds.Colour.random()
         embed.set_footer(
             text="Help requested by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
             icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
         await message.channel.send(content=None, embed=embed)
 
+    if message.content.startswith('$Status'):
+        for userRole in message.author.roles:
+            if userRole.name == 'Owner':
+                message_array14 = message.content[8:]
+                await bot.change_presence(activity=discord.Streaming(name=f'{message_array14}', url='https://www.twitch.tv/random_account'))
+
 
     if message.content.startswith('$Poll'):
 
         ik = message.guild.get_channel(message.raw_channel_mentions[0])
-
+        # ROLE4331 = discord.utils.get(message.author.roles, name='Preview Bot User 💻')
         for userRole in message.author.roles:
-            if userRole.name == 'Jr. Moderator':
+            if userRole.name == 'Preview Bot User 💻':
+
                 message_array10 = message.content[27:]
+
                 embed = discord.Embed(title="A Poll Has Been Created!", description="Please react with the reaction of your choice")
                 embed.add_field(name="Poll:", value=f'```{message_array10}```')
+                embed.colour=discord.embeds.Colour.random()
                 embed.set_footer(
                 text="Poll created by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
                 icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
-                await ik.send(content=None, embed=embed)
+                await message.channel.purge(limit=1)
+                await ik.send(content=None, embed=embed, )
+
+
 
     if message.content == '$random number':
         await message.channel.send(f'This is your random number {random.randrange(100000)}')
@@ -698,7 +778,13 @@ async def on_message(message):
 
 # @bot.event
 # async def on_ready():
-#     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Cocomelon!"))
+    # await bot.change_presence(activity=discord.Activity(type=discord.BaseActivity(application_id="844746411429986314 ", name="Test", type=5, state="In Game", details="Competetive", start=1621866930000, end=1621867230)))
+#
+# @bot.event
+# async def on_ready():
+#     await bot.change_presence(
+#         activity=discord.Streaming(name='Brawl stars', url='https://www.twitch.tv/R3Pros'))
+#     await bot.change_presence(activity=discord.Activity(type=discord.Streaming()))
     #
     # await bot.change_presence(activity=discord.Game(name="mhm.."))
     #
@@ -709,20 +795,21 @@ async def on_message(message):
     # await bot.change_presence(activity=discord.Game(name="so what?"))
 
 
-async def ch_pr():
-    await bot.wait_until_ready()
-
-    statuses = ["Logging 20/7!", "Moderation| $help", f" The bot is on {len(bot.guilds)} servers"]
-
-    while not bot.is_closed():
-
-        status = random.choice(statuses)
-
-        await bot.change_presence(activity=discord.Game(name=status))
-
-        await asyncio.sleep(2)
-
-bot.loop.create_task(ch_pr())
+#
+# async def ch_pr():
+#     await bot.wait_until_ready()
+#
+#     statuses = ["Logging 20/7!", "Moderation| $help", f" The bot is on {len(bot.guilds)} servers"]
+#
+#     while not bot.is_closed():
+#
+#         status = random.choice(statuses)
+#
+#         await bot.change_presence(activity=discord.Game(name=status))
+#
+#         await asyncio.sleep(2)
+#
+# bot.loop.create_task(ch_pr())
 
 
 @bot.event
@@ -1095,7 +1182,6 @@ async def on_guild_role_delete(role):
 async def on_guild_role_update(before, after):
         if after.name:
 
-
             embed = Embed(title="Role updated",
                           description=f"Name = {after.name}.",
                           colour=after.colour,
@@ -1112,7 +1198,6 @@ async def on_guild_role_update(before, after):
                 for channel in guild.channels:
                     if channel.name == 'audit-log':
                         await channel.send(embed=embed)
-
 
 
 
