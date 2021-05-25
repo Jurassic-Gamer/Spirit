@@ -5,9 +5,10 @@ import os
 import random
 from random import randint
 
+from discord import Spotify
 import discord
 from discord import Embed, message
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord_slash import SlashCommand
 from discord_slash.utils.manage_commands import create_option
 from dotenv import load_dotenv
@@ -27,6 +28,9 @@ slash = SlashCommand(bot, sync_commands=True) # Declares slash commands through 
 
 
 guild_ids=[844963697709547521, 844759830521577512, 844759811651928124]
+
+
+
 
 #
 # @slash.slash(name="Ping", description="Finds the bot latency. In Ping Pong! 🏓", guild_ids=guild_ids)
@@ -109,13 +113,11 @@ async def add_whitelist(message):
 
 @bot.event
 async def on_message(message):
-    await add_whitelist(message)
-    # blacklist = {'CS|Cenzoic#5851', 'name2', 'name3'}
-
-    if message.author.display_name not in Blacklist101:
-        return
-    # if message.author == bot.user:
+    # await add_whitelist(message)
+    # if message.author.display_name not in Blacklist101:
     #     return
+    if message.author == bot.user:
+        return
 
 
     # blacklist = {'CS|Cenzoic', 'name2', 'name3'}
@@ -145,8 +147,11 @@ async def on_message(message):
 
         embed = discord.Embed(title="Shard stuff", description="Idk")
         embed.add_field(name="Shard_count", value=f'{str(bot.shard_count)}')
-        embed.add_field(name="Audit-Log", value=f'{bot.shard_id}')
-        embed.add_field(name="Fun", value=f'{bot.is_ws_ratelimited()}')
+        embed.add_field(name="Shard id", value=f'{bot.shard_id}')
+        # embed.add_field(name="Shard id", value=f'{bot.activity.name}')
+        embed.add_field(name="Shard id", value=f'{bot.owner_id}')
+        embed.add_field(name="Shard id", value=f'{bot.application_info()}')
+        embed.add_field(name="Is bot ratelimited", value=f'{bot.is_ws_ratelimited()}')
         # embed.add_field(name="Modmail", value='Type ```$help modmail``` to trigger the help command')
         # embed.add_field(name="Slash commands", value='Type ```/``` to view the bots slash command!')
         # embed.add_field(name="General", value='Type ```$help general``` to trigger the help command!')
@@ -248,18 +253,41 @@ async def on_message(message):
         await message.channel.send(content=None, embed=embed)
 
     if message.content.startswith('$Status'):
+        # userRole1 = discord.utils.get(message.author.roles, name='Owner')
+
+        hasOwnerRole = False
         for userRole in message.author.roles:
             if userRole.name == 'Owner':
-                message_array14 = message.content[8:]
-                await bot.change_presence(activity=discord.Streaming(name=f'{message_array14}', url='https://www.twitch.tv/random_account'))
+                hasOwnerRole = True
+
+        if (hasOwnerRole):
+            message_array14 = message.content[8:]
+            mes13 = await message.channel.send("Changing bot status")
+            await mes13.edit(content="Changing bot status.")
+            await asyncio.sleep(1.5)
+            await mes13.edit(content="Changing bot status..")
+            await asyncio.sleep(1.5)
+            await mes13.edit(content="Changing bot status...")
+            await asyncio.sleep(1.5)
+            await mes13.edit(content="Process completed!")
+            await bot.change_presence(activity=discord.Streaming(name=f'{message_array14}', url='https://www.twitch.tv/cosmic_tostilla_101'))
+        else:
+            embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
+            embed.add_field(name="Error:", value=f'Missing permissions')
+            embed.colour = discord.embeds.Colour.red()
+            embed.set_footer(
+                text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+                icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+            await message.channel.send(content=None, embed=embed, )
 
 
     if message.content.startswith('$Poll'):
 
-        ik = message.guild.get_channel(message.raw_channel_mentions[0])
         # ROLE4331 = discord.utils.get(message.author.roles, name='Preview Bot User 💻')
+        hasPollRole = False
         for userRole in message.author.roles:
             if userRole.name == 'Preview Bot User 💻':
+                hasPollRole = True
 
                 message_array10 = message.content[27:]
 
@@ -270,8 +298,15 @@ async def on_message(message):
                 text="Poll created by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
                 icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
                 await message.channel.purge(limit=1)
-                await ik.send(content=None, embed=embed, )
-
+                await message.channel.send(content=None, embed=embed, )
+            else:
+                embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
+                embed.add_field(name="Error:", value=f'Missing permissions')
+                embed.colour=discord.embeds.Colour.red()
+                embed.set_footer(
+                text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+                icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+                await message.channel.send(content=None, embed=embed, )
 
 
     if message.content == '$random number':
@@ -291,8 +326,10 @@ async def on_message(message):
         mutedRole = discord.utils.get(mbr.roles, name='Muted')
 
 
+        hasOwnerRole = False
         for userRole in message.author.roles:
             if userRole.name == 'Admin':
+                hasOwnerRole = True
                 if not mutedRole:
                     try:
                         mutedRole = await guild.create_role(name="Muted")
@@ -310,7 +347,14 @@ async def on_message(message):
                 await mbr.remove_roles(mutedRole)
                 await message.channel.send(f"You were unmuted by the system! {mbr.mention}. ")
                 await mbr.send(f"You were unmuted in the server {guild.name}")
-
+            else:
+                embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
+                embed.add_field(name="Error:", value=f'Missing permissions')
+                embed.colour=discord.embeds.Colour.red()
+                embed.set_footer(
+                text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+                icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+                await message.channel.send(content=None, embed=embed, )
 
     if message.content.startswith('$Nick'):
         message_array5 = message.content[28:]
@@ -376,11 +420,11 @@ async def on_message(message):
     if message.content.startswith('$Purge'):
         for userRole in message.author.roles:
             if userRole.name == 'Admin':
-                amount = 10
+                amount = int(message.content[7:])
                 await message.channel.purge(limit=amount)
-                await message.channel.send('I have purged the channel!')
+                await message.channel.send(f'I have deleted {amount} messages')
                 await asyncio.sleep(5)
-                await message.channel.purge(limit=1)
+                await message.channel.purge(limit=amount)
 
 
     if message.content == '$Who am I':
@@ -428,6 +472,8 @@ async def on_message(message):
                 # x[2]
                 # print(x)
                 await message.channel.send(f'A member has been kicked for {message_array}')
+
+
 
     if message.content.startswith('$warn'):
         message_array3 = message.content[28:]
@@ -922,7 +968,7 @@ async def on_member_update(before, after):
 
             for guild in bot.guilds:
                 for channel in guild.channels:
-                    if channel.name == 'audit-log':
+                    if channel.name == 'modlog':
                         await channel.send(embed=embed)
 
 
@@ -946,7 +992,7 @@ async def on_message_edit(before, after):
 
             for guild in bot.guilds:
                 for channel in guild.channels:
-                    if channel.name == 'audit-log':
+                    if channel.name == 'modlog':
                         await channel.send(embed=embed)
 
 @bot.event
@@ -964,7 +1010,7 @@ async def on_guild_channel_create(channel):
 
         for guild in bot.guilds:
             for channel in guild.channels:
-                if channel.name == 'audit-log':
+                if channel.name == 'modlog':
                     await channel.send(embed=embed)
 
 
@@ -983,7 +1029,7 @@ async def on_guild_channel_delete(channel):
 
         for guild in bot.guilds:
             for channel in guild.channels:
-                if channel.name == 'audit-log':
+                if channel.name == 'modlog':
                     await channel.send(embed=embed)
 
 @bot.event
@@ -1000,7 +1046,7 @@ async def on_guild_channel_pins_update(channel, last_pin):
 
         for guild in bot.guilds:
             for channel in guild.channels:
-                if channel.name == 'audit-log':
+                if channel.name == 'modlog':
                     await channel.send(embed=embed)
 
 
@@ -1019,7 +1065,7 @@ async def on_guild_integrations_update(channel, guild):
 
         for guild in bot.guilds:
             for channel in guild.channels:
-                if channel.name == 'audit-log':
+                if channel.name == 'modlog':
                     await channel.send(embed=embed)
 
 @bot.event
@@ -1037,7 +1083,7 @@ async def on_webhooks_update(channel):
 
         for guild in bot.guilds:
             for channel in guild.channels:
-                if channel.name == 'audit-log':
+                if channel.name == 'modlog':
                     await channel.send(embed=embed)
 
 
@@ -1085,7 +1131,7 @@ async def on_member_ban(before, after):
 
             for guild in bot.guilds:
                 for channel in guild.channels:
-                    if channel.name == 'audit-log':
+                    if channel.name == 'modlog':
                         await channel.send(embed=embed)
 
 
@@ -1107,7 +1153,7 @@ async def on_invite_create(invite):
 
         for guild in bot.guilds:
             for channel in guild.channels:
-                if channel.name == 'audit-log':
+                if channel.name == 'modlog':
                     await channel.send(embed=embed)
 
 
@@ -1130,7 +1176,7 @@ async def on_message_delete(before):
 
             for guild in bot.guilds:
                 for channel in guild.channels:
-                    if channel.name == 'audit-log':
+                    if channel.name == 'modlog':
                         await channel.send(embed=embed)
 
 
@@ -1153,7 +1199,7 @@ async def on_guild_role_create(role):
 
             for guild in bot.guilds:
                 for channel in guild.channels:
-                    if channel.name == 'audit-log':
+                    if channel.name == 'modlog':
                         await channel.send(embed=embed)
 
 @bot.event
@@ -1175,7 +1221,7 @@ async def on_guild_role_delete(role):
 
             for guild in bot.guilds:
                 for channel in guild.channels:
-                    if channel.name == 'audit-log':
+                    if channel.name == 'modlog':
                         await channel.send(embed=embed)
 
 @bot.event
@@ -1196,7 +1242,7 @@ async def on_guild_role_update(before, after):
 
             for guild in bot.guilds:
                 for channel in guild.channels:
-                    if channel.name == 'audit-log':
+                    if channel.name == 'modlog':
                         await channel.send(embed=embed)
 
 
