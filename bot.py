@@ -274,7 +274,7 @@ async def on_message(message):
         else:
             embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
             embed.add_field(name="Error:", value=f'Missing permissions')
-            embed.colour = discord.embeds.Colour.red()
+            embed.colour = discord.embeds.Colour.dark_red()
             embed.set_footer(
                 text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
                 icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
@@ -283,30 +283,32 @@ async def on_message(message):
 
     if message.content.startswith('$Poll'):
 
-        # ROLE4331 = discord.utils.get(message.author.roles, name='Preview Bot User 💻')
         hasPollRole = False
         for userRole in message.author.roles:
-            if userRole.name == 'Preview Bot User 💻':
+            if userRole.name == 'Owner':
                 hasPollRole = True
 
-                message_array10 = message.content[27:]
+        if (hasPollRole):
 
-                embed = discord.Embed(title="A Poll Has Been Created!", description="Please react with the reaction of your choice")
-                embed.add_field(name="Poll:", value=f'```{message_array10}```')
-                embed.colour=discord.embeds.Colour.random()
-                embed.set_footer(
-                text="Poll created by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
-                icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
-                await message.channel.purge(limit=1)
-                await message.channel.send(content=None, embed=embed, )
-            else:
-                embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
-                embed.add_field(name="Error:", value=f'Missing permissions')
-                embed.colour=discord.embeds.Colour.red()
-                embed.set_footer(
-                text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
-                icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
-                await message.channel.send(content=None, embed=embed, )
+            message_array10 = message.content[27:]
+            HAHAHA = message.guild.get_channel(message.raw_channel_mentions[0])
+
+            embed = discord.Embed(title="A Poll Has Been Created!", description="Please react with the reaction of your choice")
+            embed.add_field(name="Poll:", value=f'```{message_array10}```')
+            embed.colour=discord.embeds.Colour.random()
+            embed.set_footer(
+            text="Poll created by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+            icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+            await message.channel.purge(limit=1)
+            await HAHAHA.send(content=None, embed=embed, )
+        else:
+            embed = discord.Embed(title="Error", description="Error")
+            embed.add_field(name="You lack the required permissions:", value=f'Missing permissions')
+            embed.colour=discord.embeds.Colour.dark_red()
+            embed.set_footer(
+            text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+            icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+            await message.channel.send(content=None, embed=embed, )
 
 
     if message.content == '$random number':
@@ -326,45 +328,59 @@ async def on_message(message):
         mutedRole = discord.utils.get(mbr.roles, name='Muted')
 
 
-        hasOwnerRole = False
+        hasPnerRole = False
         for userRole in message.author.roles:
             if userRole.name == 'Admin':
-                hasOwnerRole = True
-                if not mutedRole:
-                    try:
-                        mutedRole = await guild.create_role(name="Muted")
-                    except Exception as e:
-                        print(e)
+                hasPnerRole = True
+        if (hasPnerRole):
 
-                for channel in guild.channels:
-                    # await message.channel.send("No muted role has been found. Creating role...")
-                    await channel.set_permissions(mutedRole, speak=False, send_messages=False, read_message_history=True,
-                                                  read_messages=False)
-                await mbr.add_roles(mutedRole)
-                await message.channel.send(f"Muted {mbr.mention} for reason {message_array2}")
-                await mbr.send(f"You were muted in the server {guild.name} for {message_array2}")
-                await asyncio.sleep(600)
-                await mbr.remove_roles(mutedRole)
-                await message.channel.send(f"You were unmuted by the system! {mbr.mention}. ")
-                await mbr.send(f"You were unmuted in the server {guild.name}")
-            else:
-                embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
-                embed.add_field(name="Error:", value=f'Missing permissions')
-                embed.colour=discord.embeds.Colour.red()
-                embed.set_footer(
-                text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
-                icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
-                await message.channel.send(content=None, embed=embed, )
+            if not mutedRole:
+                try:
+                    mutedRole = await guild.create_role(name="Muted")
+                except Exception as e:
+                    print(e)
+
+            for channel in guild.channels:
+                # await message.channel.send("No muted role has been found. Creating role...")
+                await channel.set_permissions(mutedRole, speak=False, send_messages=False, read_message_history=True,
+                                              read_messages=False)
+            await mbr.add_roles(mutedRole)
+            await message.channel.send(f"Muted {mbr.mention} for reason {message_array2}")
+            await mbr.send(f"You were muted in the server {guild.name} for {message_array2}")
+            await asyncio.sleep(600)
+            await mbr.remove_roles(mutedRole)
+            await message.channel.send(f"You were unmuted by the system! {mbr.mention}. ")
+            await mbr.send(f"You were unmuted in the server {guild.name}")
+        else:
+            embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
+            embed.add_field(name="Error:", value=f'Missing permissions')
+            embed.colour=discord.embeds.Colour.red()
+            embed.set_footer(
+            text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+            icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+            await message.channel.send(content=None, embed=embed, )
 
     if message.content.startswith('$Nick'):
         message_array5 = message.content[28:]
         oka = await message.guild.fetch_member(message.raw_mentions[0])
         guild = message.guild
+        hasAnerRole = False
         for userRole in message.author.roles:
             if userRole.name == 'Admin':
-                await oka.edit(member=oka, nick=message_array5)
-                await message.channel.send(f"Changed {oka.mention}  Nickname.")
-                await oka.send(f"Your nickname was changed in a server: {guild.name} for {message_array5}")
+                hasAerRole = True
+
+        if (hasAnerRole):
+            await oka.edit(member=oka, nick=message_array5)
+            await message.channel.send(f"Changed {oka.mention}  Nickname.")
+            await oka.send(f"Your nickname was changed in a server: {guild.name} for {message_array5}")
+        else:
+            embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
+            embed.add_field(name="Error:", value=f'Missing permissions')
+            embed.colour=discord.embeds.Colour.red()
+            embed.set_footer(
+            text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+            icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+            await message.channel.send(content=None, embed=embed, )
 
     if message.content.startswith('$slowmode'):
         # message_array6 = message.content[12:]
@@ -373,10 +389,24 @@ async def on_message(message):
         # huh = discord.utils.get(message.raw_channel_mentions[0])
         guild = message.guild
         # seconds = 5
+        haNickRole = False
         for userRole in message.author.roles:
             if userRole.name == 'Admin':
-                await huh.edit(slowmode_delay=time)
-                await message.channel.send(f'Slow mode has been enabled! Channel: {huh} for {time} seconds.')
+                haNickRole = True
+
+        if (haNickRole):
+
+            await huh.edit(slowmode_delay=time)
+            await message.channel.send(f'Slow mode has been enabled! Channel: {huh} for {time} seconds.')
+        else:
+            embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
+            embed.add_field(name="Error:", value=f'Missing permissions')
+            embed.colour=discord.embeds.Colour.red()
+            embed.set_footer(
+            text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+            icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+            await message.channel.send(content=None, embed=embed, )
+
 
     if message.content == '$Invite':
         await message.channel.send(f'I sent you a private message {message.author.mention}')
@@ -398,34 +428,49 @@ async def on_message(message):
 
         guild = message.guild
         mutedRole = discord.utils.get(mrb.roles, name='Muted')
-
-        if not mutedRole:
-            try:
-                mutedRole = await guild.create_role(name="Muted")
-            except Exception as e:
-                print(e)
-
-        for channel in guild.channels:
-            # await message.channel.send("No muted role has been found. Creating role...")
-            await channel.set_permissions(mutedRole, speak=False, send_messages=False, read_message_history=True,
-                                          read_messages=False)
-
-        # await bot.fetch_user(message.raw_mentions[0]).add_role(mutedRole)
-        # mbr = await message.guild.fetch_member(message.raw_mentions[0])
-        await mrb.remove_roles(mutedRole)
-        # await member.add_roles(mutedRole)
-        await message.channel.send(f"unmuted {mrb.mention} for reason {message_array3}")
-        await mrb.send(f"You were unmuted in the server {guild.name} for {message_array3}")
-
-    if message.content.startswith('$Purge'):
+        haUickRole = False
         for userRole in message.author.roles:
             if userRole.name == 'Admin':
-                amount = int(message.content[7:])
-                await message.channel.purge(limit=amount)
-                await message.channel.send(f'I have deleted {amount} messages')
-                await asyncio.sleep(5)
-                await message.channel.purge(limit=amount)
+                haUickRole = True
 
+
+        if (haNickRole):
+
+            await mrb.remove_roles(mutedRole)
+            # await member.add_roles(mutedRole)
+            await message.channel.send(f"unmuted {mrb.mention} for reason {message_array3}")
+            await mrb.send(f"You were unmuted in the server {guild.name} for {message_array3}")
+        else:
+            embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
+            embed.add_field(name="Error:", value=f'Missing permissions')
+            embed.colour = discord.embeds.Colour.red()
+            embed.set_footer(
+                text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+                icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+            await message.channel.send(content=None, embed=embed, )
+
+
+    if message.content.startswith('$Purge'):
+        hasidkROle = False
+        for userRole in message.author.roles:
+            if userRole.name == 'Admin':
+                hasidkROle = True
+
+
+        if (hasidkROle):
+            amount = int(message.content[7:])
+            await message.channel.purge(limit=amount)
+            await message.channel.send(f'I have deleted {amount} messages')
+            await asyncio.sleep(5)
+            await message.channel.purge(limit=amount)
+        else:
+            embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
+            embed.add_field(name="Error:", value=f'Missing permissions')
+            embed.colour = discord.embeds.Colour.red()
+            embed.set_footer(
+                text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+                icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+            await message.channel.send(content=None, embed=embed, )
 
     if message.content == '$Who am I':
         embed = discord.Embed(title="Hello!", description="Your name is...")
@@ -462,17 +507,29 @@ async def on_message(message):
         await message.channel.send(f"Pong! {round(bot.latency * 1000)}ms")
 
     if message.content.startswith('$kick'):
+        haha = False
         for userRole in message.author.roles:
             if userRole.name == 'Admin':
-                message_array = message.content[28:]
-                await message.guild.kick(await bot.fetch_user(message.raw_mentions[0]), reason=message_array[2])
-                # txt = message.content
-                #
-                # x = txt.split()
-                # x[2]
-                # print(x)
-                await message.channel.send(f'A member has been kicked for {message_array}')
+                haha = True
 
+
+        if (haha):
+            message_array = message.content[28:]
+            await message.guild.kick(await bot.fetch_user(message.raw_mentions[0]), reason=message_array[2])
+            # txt = message.content
+            #
+            # x = txt.split()
+            # x[2]
+            # print(x)
+            await message.channel.send(f'A member has been kicked for {message_array}')
+        else:
+            embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
+            embed.add_field(name="Error:", value=f'Missing permissions')
+            embed.colour = discord.embeds.Colour.red()
+            embed.set_footer(
+                text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+                icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+            await message.channel.send(content=None, embed=embed, )
 
 
     if message.content.startswith('$warn'):
@@ -481,9 +538,25 @@ async def on_message(message):
         guild = message.guild
         mhm = await message.guild.fetch_member(message.raw_mentions[0])
 
-        # await bot.fetch_user(message.raw_mentions[0])
-        await message.channel.send(f"Warned {mhm.mention} for reason {message_array3}")
-        await mhm.send(f"You were warned in a server: {guild.name} for {message_array3}")
+        OKA = False
+        for userRole in message.author.roles:
+            if userRole.name == 'Jr. Moderator':
+                OKA = True
+
+
+                if (OKA):
+                    # await bot.fetch_user(message.raw_mentions[0])
+                    await message.channel.send(f"Warned {mhm.mention} for reason {message_array3}")
+                    await mhm.send(f"You were warned in a server: {guild.name} for {message_array3}")
+                else:
+                    embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
+                    embed.add_field(name="Error:", value=f'Missing permissions')
+                    embed.colour = discord.embeds.Colour.red()
+                    embed.set_footer(
+                        text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+                        icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+                    await message.channel.send(content=None, embed=embed, )
+
 
     if message.content == '$new':
         await message.channel.send(f'Success! Please answer these questions: In the channel questions')
@@ -513,12 +586,28 @@ async def on_message(message):
     if message.content.startswith('$reply'):
         message_array14 = message.content[25:]
         cook = await message.guild.fetch_member(message.raw_mentions[0])
-        embed = discord.Embed(title="Question Answered!:", description="Question Answered. User Please Check")
-        embed.add_field(name="Question Answer:", value=message.content)
-        embed.set_footer(text="Answered by:" + " " + message.author.display_name)
-        embed.set_thumbnail(url=message.author.avatar_url)
-        embed.set_footer(text="Answered by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
-        await cook.send(content=None, embed=embed)
+        reply = False
+        for userRole in message.author.roles:
+            if userRole.name == 'Admin':
+                reply = True
+
+
+                if (reply):
+                    embed = discord.Embed(title="Question Answered!:", description="Question Answered. User Please Check")
+                    embed.add_field(name="Question Answer:", value=message_array14)
+                    embed.set_footer(text="Answered by:" + " " + message.author.display_name)
+                    embed.set_thumbnail(url=message.author.avatar_url)
+                    embed.set_footer(text="Answered by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+                    await cook.create_dm()
+                    await cook.dm_channel.send(content=None, embed=embed)
+                else:
+                    embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
+                    embed.add_field(name="Error:", value=f'Missing permissions')
+                    embed.colour = discord.embeds.Colour.red()
+                    embed.set_footer(
+                        text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+                        icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+                    await message.channel.send(content=None, embed=embed, )
 
     # if message.content.startswith('$Close'):
     #
@@ -672,11 +761,22 @@ async def on_message(message):
         BP = message.guild.get_role(message.raw_role_mentions[0])
         guild = message.guild
 
+        ModRole = False
         for userRole in message.author.roles:
             if userRole.name == 'Moderator':
+                ModRole = True
 
-                await AP.add_roles(BP)
-                await message.channel.send(f'Role given to {AP.mention} Added role: {BP.name}')
+                if (ModRole):
+                    await AP.add_roles(BP)
+                    await message.channel.send(f'Role given to {AP.mention} Added role: {BP.name}')
+                else:
+                    embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
+                    embed.add_field(name="Error:", value=f'Missing permissions')
+                    embed.colour = discord.embeds.Colour.red()
+                    embed.set_footer(
+                        text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+                        icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+                    await message.channel.send(content=None, embed=embed, )
 
     if message.content.startswith('$Remove'):
         CP = await message.guild.fetch_member(message.raw_mentions[0])
@@ -698,19 +798,19 @@ async def on_message(message):
 
     if message.content.startswith('say'):
 
-        # for userRole in message.author.roles:
-        #     if userRole.name == 'Admin':
+        for userRole in message.author.roles:
+            if userRole.name == 'Admin':
 
-        message_array4 = message.content[26:]
-        oki = await message.guild.fetch_member(message.raw_mentions[0])
-        webhook = await message.channel.create_webhook(name=oki.display_name)
-        await message.channel.purge(limit=1)
-        await webhook.send(
-            str(message_array4), username=oki.display_name, avatar_url=oki.avatar_url)
+                message_array4 = message.content[26:]
+                oki = await message.guild.fetch_member(message.raw_mentions[0])
+                webhook = await message.channel.create_webhook(name=oki.display_name)
+                await message.channel.purge(limit=1)
+                await webhook.send(
+                    str(message_array4), username=oki.display_name, avatar_url=oki.avatar_url)
 
-        webhooks = await message.channel.webhooks()
-        for webhook in webhooks:
-                await webhook.delete()
+                webhooks = await message.channel.webhooks()
+                for webhook in webhooks:
+                        await webhook.delete()
 
     if message.content.startswith('Ann'):
 
