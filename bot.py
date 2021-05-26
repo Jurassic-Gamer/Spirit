@@ -92,32 +92,43 @@ with open('blacklist.txt', 'a+', encoding='utf-8') as i:
     # log.append(AuditData("a", "b", "c", "d", "e"))
     for line in i:
        (user_name) = line.split()
-       Blacklist101.append(user_name)
+       Blacklist101.append(id)
   except Exception as e:
     print(e)
 
-async def add_whitelist(message):
+async def add_blacklist(message):
 
-    if message.content.startswith('Whitelist'):
+    if message.content.startswith('Block List'):
         sureee = await message.guild.fetch_member(message.raw_mentions[0])
 
         with open('blacklist.txt', 'a+', encoding='utf-8') as i:
             # try:
 
-                i.write(str(sureee.display_name) + "\n")
-                Blacklist101.append(str(sureee.display_name))
+                i.write(str(sureee.id) + "\n")
+                Blacklist101.append(str(sureee.id))
                 print('HELLO PEOPLE')
+                await message.channel.send('User Block Listed!')
             # except Exception as e:
             #     print(e)
+
+    if message.content.startswith('Allow list'):
+        sureeee = await message.guild.fetch_member(message.raw_mentions[0])
+
+        with open("blacklist.txt", "r") as i:
+            lines = i.readlines()
+        with open("blacklist.txt", "w") as i:
+            for line in lines:
+                if line.strip("\n") != f"{sureeee.id}":
+                    i.write(line)
 
 
 @bot.event
 async def on_message(message):
-    # await add_whitelist(message)
-    # if message.author.display_name not in Blacklist101:
-    #     return
-    if message.author == bot.user:
+    await add_blacklist(message)
+    if message.author.id not in Blacklist101:
         return
+    # if message.author == bot.user:
+    #     return
 
 
     # blacklist = {'CS|Cenzoic', 'name2', 'name3'}
