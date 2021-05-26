@@ -614,6 +614,17 @@ async def on_message(message):
     #     #     if isinstance(activity, Spotify):
     #     #         await message.channel.send(f"{user} is listening to {activity.title} by {activity.artist}")
 
+    if message.content.startswith("$say"):
+        owner101 = str(message.author)
+        message_array16 = message.content[5:]
+        await message.channel.send(f'{message_array16} \n \n -{owner101}')
+
+    if message.content.startswith('$Imagine'):
+        ownerte = str(message.author)
+        message_array17 = message.content[9:]
+        await message.channel.send(f'Imagine a {message_array17} \n \n {ownerte} is trying really hard to imagine a {message_array17}')
+
+
     if message.content == '$Typing':
         typing = message.channel.trigger_typing()
         await typing
@@ -639,6 +650,9 @@ async def on_message(message):
             text="Asked by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
             icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
         await message.channel.send(content=None, embed=embed)
+
+
+
 
     if message.content.startswith('$Remind'):
         guild = message.guild
@@ -871,9 +885,9 @@ async def on_message(message):
     valid_users = ["Cosmic Dorito 🍟#4930"]
 
     if str(message.author) in valid_users:
-        if message.content.startswith('$Status'):
+        if message.content.startswith('$Stream'):
             # userRole1 = discord.utils.get(message.author.roles, name='Owner')
-                message_array14 = message.content[8:]
+                message_array14 = message.content[7:]
                 mes13 = await message.channel.send("Changing bot status")
                 await mes13.edit(content="Changing bot status.")
                 await asyncio.sleep(1.5)
@@ -886,6 +900,31 @@ async def on_message(message):
 
 
     if str(message.author) not in valid_users:
+        if message.content.startswith('$Stream'):
+                embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
+                embed.add_field(name="Error:", value=f'Missing permissions')
+                embed.colour = discord.embeds.Colour.dark_red()
+                embed.set_footer(
+                    text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+                    icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+                await message.channel.send(content=None, embed=embed, )
+
+
+    if str(message.author) in valid_users:
+        if message.content.startswith('$Status'):
+            # userRole1 = discord.utils.get(message.author.roles, name='Owner')
+                message_array18 = message.content[8:]
+                mes16 = await message.channel.send("Changing bot status")
+                await mes16.edit(content="Changing bot status.")
+                await asyncio.sleep(1.5)
+                await mes16.edit(content="Changing bot status..")
+                await asyncio.sleep(1.5)
+                await mes16.edit(content="Changing bot status...")
+                await asyncio.sleep(1.5)
+                await mes16.edit(content="Process completed!")
+                await bot.change_presence(activity=discord.Game(f'{message_array18}'))
+
+    if str(message.author) not in valid_users:
         if message.content.startswith('$Status'):
                 embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
                 embed.add_field(name="Error:", value=f'Missing permissions')
@@ -896,9 +935,81 @@ async def on_message(message):
                 await message.channel.send(content=None, embed=embed, )
 
 
+    if str(message.author) in valid_users:
+        if message.content.startswith('$Status Watching'):
+            # userRole1 = discord.utils.get(message.author.roles, name='Owner')
+                message_array19 = message.content[17:]
+                mes15 = await message.channel.send("Changing bot status")
+                await mes15.edit(content="Changing bot status.")
+                await asyncio.sleep(1.5)
+                await mes15.edit(content="Changing bot status..")
+                await asyncio.sleep(1.5)
+                await mes15.edit(content="Changing bot status...")
+                await asyncio.sleep(1.5)
+                await mes15.edit(content="Process completed!")
+                await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f'{message_array19}'))
+
+    if str(message.author) not in valid_users:
+        if message.content.startswith('$Status Watching'):
+                embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
+                embed.add_field(name="Error:", value=f'Missing permissions')
+                embed.colour = discord.embeds.Colour.dark_red()
+                embed.set_footer(
+                    text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+                    icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+                await message.channel.send(content=None, embed=embed, )
 
 
-#
+
+    if str(message.author) in valid_users:
+        if message.content.startswith('$Status listening'):
+            # userRole1 = discord.utils.get(message.author.roles, name='Owner')
+                message_array20 = message.content[18:]
+                mes14 = await message.channel.send("Changing bot status")
+                await mes14.edit(content="Changing bot status.")
+                await asyncio.sleep(1.5)
+                await mes14.edit(content="Changing bot status..")
+                await asyncio.sleep(1.5)
+                await mes14.edit(content="Changing bot status...")
+                await asyncio.sleep(1.5)
+                await mes14.edit(content="Process completed!")
+                await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f'{message_array20}'))
+
+    if str(message.author) not in valid_users:
+        if message.content.startswith('$Status listening'):
+                embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
+                embed.add_field(name="Error:", value=f'Missing permissions')
+                embed.colour = discord.embeds.Colour.dark_red()
+                embed.set_footer(
+                    text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+                    icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+                await message.channel.send(content=None, embed=embed, )
+
+    if str(message.author) in valid_users:
+        if message.content.startswith('$Status competing'):
+            # userRole1 = discord.utils.get(message.author.roles, name='Owner')
+                message_array20 = message.content[18:]
+                mes17 = await message.channel.send("Changing bot status")
+                await mes17.edit(content="Changing bot status.")
+                await asyncio.sleep(1.5)
+                await mes17.edit(content="Changing bot status..")
+                await asyncio.sleep(1.5)
+                await mes17.edit(content="Changing bot status...")
+                await asyncio.sleep(1.5)
+                await mes17.edit(content="Process completed!")
+                await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f'{message_array20}'))
+
+    if str(message.author) not in valid_users:
+        if message.content.startswith('$Status listening'):
+                embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
+                embed.add_field(name="Error:", value=f'Missing permissions')
+                embed.colour = discord.embeds.Colour.dark_red()
+                embed.set_footer(
+                    text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+                    icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+                await message.channel.send(content=None, embed=embed, )
+
+
 # with open('reports.json', 'a+', encoding='utf-8') as f:
 #   try:
 #     report = json.load(f)
