@@ -86,47 +86,51 @@ async def _pick(ctx, choice1="head", choice2="tail"): # Command with 1 or more a
 #     num2 = int(variables[2])
 #     await ctx.send(num1 + num2)
 
-Blacklist101 = []
-with open('blacklist.txt', 'a+', encoding='utf-8') as i:
-  try:
-    # log.append(AuditData("a", "b", "c", "d", "e"))
-    for line in i:
-       (user_name) = line.split()
-       Blacklist101.append(id)
-  except Exception as e:
-    print(e)
+# Blacklist101 = []
+# with open('blacklist.txt', 'a+', encoding='utf-8') as i:
+#   try:
+#     # log.append(AuditData("a", "b", "c", "d", "e"))
+#     for line in i:
+#        (user_id) = line.split()
+#        Blacklist101.append(id)
+#   except Exception as e:
+#     print(e)
 
 async def add_blacklist(message):
 
     if message.content.startswith('Block List'):
         sureee = await message.guild.fetch_member(message.raw_mentions[0])
 
-        with open('blacklist.txt', 'a+', encoding='utf-8') as i:
-            # try:
-
-                i.write(str(sureee.id) + "\n")
-                Blacklist101.append(str(sureee.id))
-                print('HELLO PEOPLE')
-                await message.channel.send('User Block Listed!')
-            # except Exception as e:
-            #     print(e)
-
-    if message.content.startswith('Allow list'):
-        sureeee = await message.guild.fetch_member(message.raw_mentions[0])
 
         with open("blacklist.txt", "r") as i:
-            lines = i.readlines()
-        with open("blacklist.txt", "w") as i:
+            lines = i.read().splitlines()
+
+        if (str(sureee.id) not in lines):
+            with open('blacklist.txt', 'a+', encoding='utf-8') as i:
+                i.write(str(sureee.id) + "\n")
+                await message.channel.send('User Block Listed - ' + str(sureee.display_name))
+        else:
+            await message.channel.send('User already Block Listed - ' + str(sureee.display_name))
+
+    if message.content.startswith('Allow'):
+        sureeee = await message.guild.fetch_member(message.raw_mentions[0])
+        with open("blacklist.txt", "r") as f:
+            lines = f.read().splitlines()
+        with open("blacklist.txt", "w") as f:
             for line in lines:
                 if line.strip("\n") != f"{sureeee.id}":
-                    i.write(line)
+                    f.write(line)
 
 
 @bot.event
 async def on_message(message):
     await add_blacklist(message)
-    if message.author.id not in Blacklist101:
+    with open("blacklist.txt", "r") as f:
+        lines = f.read().splitlines()
+
+    if str(message.author.id) in lines:
         return
+
     # if message.author == bot.user:
     #     return
 
@@ -263,33 +267,6 @@ async def on_message(message):
             icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
         await message.channel.send(content=None, embed=embed)
 
-    if message.content.startswith('$Status'):
-        # userRole1 = discord.utils.get(message.author.roles, name='Owner')
-
-        hasOwnerRole = False
-        for userRole in message.author.roles:
-            if userRole.name == 'Owner':
-                hasOwnerRole = True
-
-        if (hasOwnerRole):
-            message_array14 = message.content[8:]
-            mes13 = await message.channel.send("Changing bot status")
-            await mes13.edit(content="Changing bot status.")
-            await asyncio.sleep(1.5)
-            await mes13.edit(content="Changing bot status..")
-            await asyncio.sleep(1.5)
-            await mes13.edit(content="Changing bot status...")
-            await asyncio.sleep(1.5)
-            await mes13.edit(content="Process completed!")
-            await bot.change_presence(activity=discord.Streaming(name=f'{message_array14}', url='https://www.twitch.tv/cosmic_tostilla_101'))
-        else:
-            embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
-            embed.add_field(name="Error:", value=f'Missing permissions')
-            embed.colour = discord.embeds.Colour.dark_red()
-            embed.set_footer(
-                text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
-                icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
-            await message.channel.send(content=None, embed=embed, )
 
 
     if message.content.startswith('$Poll'):
@@ -473,7 +450,7 @@ async def on_message(message):
             await message.channel.purge(limit=amount)
             await message.channel.send(f'I have deleted {amount} messages')
             await asyncio.sleep(5)
-            await message.channel.purge(limit=amount)
+            await message.channel.purge(limit=1)
         else:
             embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
             embed.add_field(name="Error:", value=f'Missing permissions')
@@ -884,7 +861,39 @@ async def on_message(message):
 #             embed.set_thumbnail(url=message.author.avatar_url)
 #             embed.set_footer(text="Answered by:" + " " + message.author.display_name, icon_url=message.author.avatar_url)
 #             await member_object.send(content=None, embed=embed)
+#
+#         ModRole = False
+#         for userRole in message.author.roles:
+#             if userRole.name == 'Moderator':
+#                 ModRole = True
+#
+#                 if (ModRole):
+    valid_users = ["Cosmic Dorito 🍟#4930"]
 
+    if str(message.author) in valid_users:
+        if message.content.startswith('$Status'):
+            # userRole1 = discord.utils.get(message.author.roles, name='Owner')
+                message_array14 = message.content[8:]
+                mes13 = await message.channel.send("Changing bot status")
+                await mes13.edit(content="Changing bot status.")
+                await asyncio.sleep(1.5)
+                await mes13.edit(content="Changing bot status..")
+                await asyncio.sleep(1.5)
+                await mes13.edit(content="Changing bot status...")
+                await asyncio.sleep(1.5)
+                await mes13.edit(content="Process completed!")
+                await bot.change_presence(activity=discord.Streaming(name=f'{message_array14}', url='https://www.twitch.tv/cosmic_tostilla_101'))
+
+
+    if str(message.author) not in valid_users:
+        if message.content.startswith('$Status'):
+                embed = discord.Embed(title="You lack the permissions to do this command", description="Error")
+                embed.add_field(name="Error:", value=f'Missing permissions')
+                embed.colour = discord.embeds.Colour.dark_red()
+                embed.set_footer(
+                    text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+                    icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+                await message.channel.send(content=None, embed=embed, )
 
 
 
