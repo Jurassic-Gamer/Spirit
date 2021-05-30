@@ -1628,7 +1628,7 @@ async def on_guild_integrations_update(channel, guild):
 
     for name, value in fields:
         embed.add_field(name=name, value=str(value))
-
+        # s
         for guild in bot.guilds:
             for channel in guild.channels:
                 if channel.name == 'modlog':
