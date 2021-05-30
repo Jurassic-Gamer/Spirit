@@ -3,12 +3,20 @@ import datetime
 import json
 import os
 import random
+import urllib
 from random import randint
 
-from discord import Spotify
+
+import requests
+from datetime import date
+from discord.ext import tasks
+from io import BytesIO
+from PIL import Image
+from discord import Spotify, reaction
 import discord
 from discord import Embed, message
 from discord.ext import commands, tasks
+from discord.ext.commands import has_permissions, CheckFailure
 from discord_slash import SlashCommand
 from discord_slash.utils.manage_commands import create_option
 from dotenv import load_dotenv
@@ -21,6 +29,7 @@ GUILD = os.getenv('DISCORD_GUILD')
 intents = discord.Intents.all()
 
 bot = commands.Bot(command_prefix="$", description="Spirit Bot. Initialized", case_insensitive=True, intents=intents)
+# bot = commands.Bot(command_prefix='$') #define command decorator
 
 
 slash = SlashCommand(bot, sync_commands=True) # Declares slash commands through the
@@ -86,15 +95,7 @@ async def _pick(ctx, choice1="head", choice2="tail"): # Command with 1 or more a
 #     num2 = int(variables[2])
 #     await ctx.send(num1 + num2)
 
-# Blacklist101 = []
-# with open('blacklist.txt', 'a+', encoding='utf-8') as i:
-#   try:
-#     # log.append(AuditData("a", "b", "c", "d", "e"))
-#     for line in i:
-#        (user_id) = line.split()
-#        Blacklist101.append(id)
-#   except Exception as e:
-#     print(e)
+
 
 async def add_blacklist(message):
 
@@ -105,22 +106,113 @@ async def add_blacklist(message):
         with open("blacklist.txt", "r") as i:
             lines = i.read().splitlines()
 
-        if (str(sureee.id) not in lines):
-            with open('blacklist.txt', 'a+', encoding='utf-8') as i:
-                i.write(str(sureee.id) + "\n")
-                await message.channel.send('User Block Listed - ' + str(sureee.display_name))
-        else:
-            await message.channel.send('User already Block Listed - ' + str(sureee.display_name))
+            if (str(sureee.id) not in lines):
+                with open('blacklist.txt', 'a+', encoding='utf-8') as i:
+                    i.write(str(sureee.id) + "\n")
+                    await message.channel.send('User Block Listed - ' + str(sureee.display_name))
+            else:
+                await message.channel.send('User already Block Listed - ' + str(sureee.display_name))
 
     if message.content.startswith('Allow'):
         sureeee = await message.guild.fetch_member(message.raw_mentions[0])
+        lines = []
         with open("blacklist.txt", "r") as f:
             lines = f.read().splitlines()
+
         with open("blacklist.txt", "w") as f:
             for line in lines:
                 if line.strip("\n") != f"{sureeee.id}":
                     f.write(line)
+                    await message.channel.send(f'{sureeee.mention} has been enabled via bot commands')
 
+
+# async def add_level(message):
+#     # user_id = message.author.id
+#     Levels = []
+#     with open('Levels.txt', 'r', encoding='utf-8') as q:
+#         try:
+#             for line in q:
+#                 (user_id, user_msg_count) = line.split()
+#         except Exception as e:
+#             print(e)
+#
+#         if line.startswith(message.author.id):
+#             with open("Levels.txt", "w") as q:
+#                 lines = q.read().splitlines()
+#                 q.write(lines)
+#                 user_id = True
+#                 q.write(user_msg_count+1)
+
+
+
+
+    # async for message in channel.history():
+    #     if message.author == user:
+    #         userMessages.append(message.content)
+    #
+    # print(len(userMessages)) # Outputs total user messages
+
+    # Levels = []
+    # with open('Levels.txt', 'r', encoding='utf-8') as q:
+    #   try:
+    #     for line in q:
+    #        (id, user_msg_count) = line.split()
+    #   except Exception as e:
+    #     print(e)
+    #
+    # with open("Levels.txt", "r") as i:
+    #     lines = i.read().splitlines()
+    #
+    #
+    #     if (str(message.author.id) not in lines):
+    #         with open('Levels.txt', 'a+', encoding='utf-8') as i:
+    #             i.write(str(message.author.id) + "\n")
+
+CHANNEl_Ok = 844963802575273984
+
+@tasks.loop(hours=24)
+async def annoucement_for_aniversary():
+    message_channel1 = bot.get_channel(CHANNEl_Ok)
+    Giveaway_Amountss = ["Today is a Very Special Day... Our 1 Month Anniversary For @Spirit!", "Today is our 1 month aniversary for Spirit bot!  :tada: ", "Whoo Hoo. 1 Month of Spirit being here!", "The time is here 1 MONTH Of Spirit Being Here."]
+    Giveaway_Amounts123 = Giveaway_Amountss[randint(0, 1)]
+    await message_channel1.send(Giveaway_Amounts123)
+
+
+
+@annoucement_for_aniversary.before_loop
+async def before():
+    await bot.wait_until_ready()
+
+
+# async def update_levels_txt(message):
+#     # 1) Open levels.txt in read-only mode and Read all lines
+#     levels = []
+#     with open('Levels.txt', 'r', encoding='utf-8') as q:
+#         levels = q.read().splitlines()
+#
+#     # 2) Open levels.txt in write mode
+#     with open('Levels.txt', 'w', encoding='utf-8') as q:
+#     # 2.1) declare a boolean variable named something like user_id_found = False
+#         user_id_is_here = False
+#     # 3) Iterate over the lines read from file
+#         for line in levels:
+#             if line.startswith(message.author.id):
+#                     user_id_is_here = True
+#                     (user_id, user_msg_count) = line.split(',')
+#                     q.write(user_id + "," + user_msg_count+1)
+#         #   4) If a line starts with message author id
+#     #       5) split the line seperated by comma in to author id and message count
+#     #       6) write user id and message count + 1 to levels.txt with a comma between them
+#     #       7) set the value of user_id_found = True
+#     #   8) else
+#             else:
+#     #       9) write line in to levels.txt
+#                 q.write(line)
+#
+#     # 10) if user_id_found = False
+#         if user_id_is_here is False:
+#     #   11) write user id and message count of 1 to levels.txt with a comma between them
+#             q.write(user_id + ",1")
 
 @bot.event
 async def on_message(message):
@@ -128,20 +220,122 @@ async def on_message(message):
     with open("blacklist.txt", "r") as f:
         lines = f.read().splitlines()
 
-    if str(message.author.id) in lines:
-        return
-
-    # if message.author == bot.user:
+    # if str(message.author.id) in lines:
     #     return
-
-
-    # blacklist = {'CS|Cenzoic', 'name2', 'name3'}
     #
-    # if message.author.name not in blacklist:
-    #     return
+    # # if message.author == bot.user:
+    # #     return
+    #
+    # await update_levels_txt(message)
+    #
+    # msg_count = 1
+    # with open('Levels.txt', 'r', encoding='utf-8') as q:
+    #     try:
+    #         for line in q:
+    #             if line.startswith(message.author.id):
+    #                 (user_id, msg_count) = line.split(',')
+    #     except Exception as e:
+    #         print(e)
+    #
+    # if (msg_count == 3):
+    #     await message.channel.send('Level 2')
+    # elif (msg_count == 100):
+    #     await message.channel.send('Level 3')
+    # elif (msg_count == 200):
+    #     await message.channel.send('Level 4')
+    # elif (msg_count > 1000000):
+    #     await message.channel.send('Level 5')
+
+    #
+        # # line =
+        # if line.startswith(message.author.id):
+        #     with open("Levels.txt", "w") as q:
+        #         lines = q.read().splitlines()
+        #         q.write(lines)
+        #         user_id = True
+        #         q.write(user_msg_count+1)
+        #         user_found = True
+        #         q.write(user_id, user_msg_count)
+        #
+        #
+        # if (str(message.author.id) not in lines):
+        #     with open('Levels.txt', 'a+', encoding='utf-8') as q:
+        #         q.write(str(message.author.id) + (user_msg_count+1))
+
+
+            # with open("Levels.txt", "w") as q:
+            #     lines = q.read().splitlines()
+            #     q.write(user_id, user_msg_count)
+
+    #         with open("blacklist.txt", "r") as i:
+    #             lines = i.read().splitlines()
+
+
+
+    if message.content.startswith('Server Icon'):
+        Guild = message.guild
+
+        # ping = Image.open("ping.png")
+
+        asset010101 = Guild.icon_url_as(size = 128)
+        data10101 = BytesIO(await asset010101.read())
+        pfp10101 = Image.open(data10101)
+
+        pfp10101 = pfp10101.resize((708,708))
+
+        # ping.paste(pfp10101, (354,354))
+
+        pfp10101.save("Server_Icon.png")
+
+        await message.channel.send(file = discord.File("Server_Icon.png"))
+
+
+
+
+
+
+
+    if message.content.startswith('Ping'):
+        Guild = message.guild
+
+        ping = Image.open("ping.png")
+
+        asset010101 = Guild.icon_url_as(size = 128)
+        data10101 = BytesIO(await asset010101.read())
+        pfp10101 = Image.open(data10101)
+
+        pfp10101 = pfp10101.resize((708,708))
+
+        ping.paste(pfp10101, (354,354))
+
+        ping.save("Ping.png")
+
+        await message.channel.send(file = discord.File("Ping.png"))
+
+
+
+    if message.content.startswith('Spank'):
+        okokokokk = await message.guild.fetch_member(message.raw_mentions[0])
+
+        spank = Image.open("spank.jpg")
+
+        asset2 = message.author.avatar_url_as(size = 128)
+        asset1 = okokokokk.avatar_url_as(size = 128)
+        data1 = BytesIO(await asset1.read())
+        data2 = BytesIO(await asset2.read())
+        pfp1 = Image.open(data1)
+        pfp2 = Image.open(data2)
+        pfp1 = pfp1.resize((100,100))
+        pfp2 = pfp2.resize((100,100))
+        spank.paste(pfp1, (150, 200))
+        spank.paste(pfp2, (145, 50))
+
+        spank.save("Spank.jpg")
+
+        await message.channel.send(file = discord.File("Spank.jpg"))
+
 
     if message.content == '$help':
-
 
         embed = discord.Embed(title="Spirit Help Command!", description="Help Command")
         embed.add_field(name="Moderation", value='Type ```$help moderation``` to trigger the help command')
@@ -150,6 +344,7 @@ async def on_message(message):
         embed.add_field(name="Modmail", value='Type ```$help modmail``` to trigger the help command')
         embed.add_field(name="Slash commands", value='Type ```/``` to view the bots slash command!')
         embed.add_field(name="General", value='Type ```$help general``` to trigger the help command!')
+        embed.add_field(name="Giveaways", value='Type ```$help giveaways``` to trigger the giveaway help command!')
         embed.colour = discord.embeds.Colour.random()
 
         embed.set_footer(
@@ -267,6 +462,16 @@ async def on_message(message):
             icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
         await message.channel.send(content=None, embed=embed)
 
+    if message.content.startswith('$ban'):
+        for userRole in message.author.roles:
+            if userRole.name == 'Admin':
+                whyyyyy = await message.guild.fetch_member(message.raw_mentions[0])
+                message_array101010011111 = message.content[28:]
+                guild = message.guild
+                await message.guild.ban(await bot.fetch_user(message.raw_mentions[0]),
+                                        reason=message_array101010011111[2])
+                await message.channel.send(f'A member has been banned for {message_array101010011111}')
+                await whyyyyy.send(f'{whyyyyy.mention} You have been banned from {guild} for the reason: {message_array101010011111}')
 
 
     if message.content.startswith('$Poll'):
@@ -436,6 +641,15 @@ async def on_message(message):
                 text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
                 icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
             await message.channel.send(content=None, embed=embed, )
+
+    if message.content.startswith('Imprison'):
+        mentioner = await message.guild.fetch_member(message.raw_mentions[0])
+        role = message.guild.get_role(848324674449702942)
+        v_channel = message.guild.get_channel(848327144140832849)
+        await mentioner.add_roles(role)
+        await v_channel.send(f"Successfully imprisoned {mentioner.mention} ⛓!")
+        await role.set_permissions(role, speak=False, send_messages=False, read_message_history=True, read_messages=False)
+
 
 
     if message.content.startswith('$Purge'):
@@ -653,6 +867,100 @@ async def on_message(message):
 
 
 
+    if message.content.startswith('$help giveaways'):
+        embed = discord.Embed(title="Giveaways help command", description="Help On Command Giveaway")
+        embed.add_field(name="Command:", value=f'```$Gstart [seconds] [Giveaway Prize]```')
+        embed.add_field(name="Warning!:", value=f'The Giveaway Mechanism Is Complex, If you have a giveaway lasting less that 10 seconds: ```$Gstart 5     [Giveaway Prize]```. \n If you have a giveaway lasting 10-99 seconds: ```$Gstart 50    [Giveaway Prize]``` \n If you have a giveaway lasting 100-999 seconds: ```$Gstart 500   [Giveaway Prize]``` \n If you have a giveaway lasting 1000-9999 seconds: ```$Gstart 5000  [Giveaway Prize]``` \n If you have a giveaway lasting 10000-99999 seconds: ```$Gstart 50000 [Giveaway Prize]``` \n')
+        embed.add_field(name="Please note:", value=f'The Lines Above The 5, 50, 500, 5000, 50000. Can be customized to any number which has the same amount of digits.')
+        embed.add_field(name="Requirements:", value=f'Must have a role named Giveaways. Assigned to giveaway creator')
+
+        embed.colour = discord.embeds.Colour.red()
+        embed.set_footer(
+            text="Giveaway HELP: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+            icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+        await message.channel.send(content=None, embed=embed, )
+
+    if message.content.startswith('$Gstart'):
+
+        giveaway = False
+        for userRole in message.author.roles:
+            if userRole.name == 'Giveaways':
+                giveaway = True
+        if (giveaway):
+            channel99 = discord.utils.get(message.author.guild.channels, name='giveaways')
+            time10101 = int(message.content[8:13])
+
+            message_array21 = message.content[14:]
+            embed = discord.Embed(title=f"Giveaway", description=f"A Giveaway Has Been Created")
+            embed.add_field(name=f"{message_array21}", value=f'Giveaway Duration: {time10101} Seconds.')
+            embed.set_footer(
+                text="Giveaway Creator " + message.author.display_name + " at " + str(datetime.datetime.utcnow()), icon_url=message.author.avatar_url)
+            # await channel99.send(content=None, embed=embed)
+            message10101010 = await channel99.send(content=None, embed=embed)
+            await message10101010.add_reaction(":Giveaway: 847253991284146238")
+            await asyncio.sleep(time10101)
+            guild = message.guild
+            memberList = guild.members
+            Giveaway_Pick = random.choice(memberList)
+            message_array21 = message.content[14:]
+            embed = discord.Embed(title=f"The Giveaway for {message_array21} is over!", description=f"GIVEAWAY ENDED")
+            embed.add_field(name=f"{message_array21}", value=f'The winner is {Giveaway_Pick}   :tada:')
+            embed.set_footer(text="Giveaway Ended " + " at " + str(datetime.datetime.utcnow()))
+            await message10101010.edit(content=None, embed=embed)
+            # mehhh = await message.guild.fetch_member(message.raw_mentions[0])
+            webhook = await message.channel.create_webhook(name="Giveaway Winner Bot")
+            await webhook.send(str(f" {Giveaway_Pick} HAS WON {message_array21}!  :tada: "), username="Giveaway Winner Bot", avatar_url="https://cdn2.iconfinder.com/data/icons/bots-monochrome/280/9-512.png")
+
+            webhooks = await message.channel.webhooks()
+            for webhook in webhooks:
+                await webhook.delete()
+
+
+        else:
+            embed = discord.Embed(title="You lack the permissions to do this command", description="Error. Must Have Role Called 'Giveaway'")
+            embed.add_field(name="Error:", value=f'Missing permissions')
+            embed.colour = discord.embeds.Colour.red()
+            embed.set_footer(
+                text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
+                icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
+            await message.channel.send(content=None, embed=embed, )
+
+
+    if message.content.startswith('$Bot Icon'):
+        await message.channel.send(file=discord.File('My_Image.png'))
+        # url = message.url[0]
+        # await url.send(url.attachment)
+    #     attachment = ctx.message.attachments[0]
+    #     print(attachment.url)
+
+    if message.content == '$Create Channel':
+        # message101012222 = message.content[16]
+        guild = message.guild
+        channel = await guild.create_text_channel('cool-channel')
+        # await message.guild.create_text_channel(name=f"{message101012222}")
+        await message.channel.send('DONE')
+
+
+    if message.content.startswith('icon'):
+        await message.author.avatar_url_as(format="png").save(fp="Icon.png")
+        await message.channel.send(file=discord.File('Icon.png'))
+
+        # file = discord.File("My_Image.png")
+        # await message.channel.send(file=file, content="Message to be sent")
+
+        # FILE = str(message.author.avatar_url({format: 'png'}))
+        # await message.channel.send(FILE)
+
+        # file = discord.File(f"{message.author.avatar_url}", filename="image.png")
+        # embed.set_image(url="attachment://image.png")
+        # await message.channel.send(file=file)
+
+        # url = message.author.avatar_url
+        # await message.channel.send(url.attachment)
+
+    if message.content.startswith('$Icon'):
+        # url = f"{str(message.author.avatar_url)[:-4]}128"
+        await message.channel.send(f"{str(message.author.avatar_url)[:-4]}128")
 
     if message.content.startswith('$Remind'):
         guild = message.guild
@@ -660,6 +968,9 @@ async def on_message(message):
         await message.channel.send(f"Hello {message.author.name} you will be reminded in {message_array11} seconds.")
         await asyncio.sleep(message_array11)
         await message.channel.send(f'You are being reminded {message.author.mention}')
+
+    if message.content == '$Start':
+        await annoucement_for_aniversary.start()
 
     if message.content.startswith('$Server info'):
         owner = str(message.guild.owner)
@@ -1008,7 +1319,31 @@ async def on_message(message):
                     text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
                     icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
                 await message.channel.send(content=None, embed=embed, )
+    starter_encouragements = [
+        "Cheer up!",
+        "Hang in there",
+        "You are a great person/bot"]
+    sad_statements = ["sad", "deppresed", "mad", "depression", "cry"]
+    msg = message.content
+    Blocked_words = ["dumb", "stupid", "lame", "weird", "shut", "freak", "dead", "hate"]
+    if any(word in msg for word in Blocked_words):
+        await message.channel.purge(limit=1)
+        await message.channel.send("You are prohibited to use those words!")
 
+
+    # options = starter_encouragements
+    # if "encouragements" in db.keys():
+    #     options = options + db["encouragements"]
+    #
+    # if any(word in msg for word in sad_statements):
+    #     await message.channel.send(random.choice(options))
+    #
+    # if msg.startswith("$new"):
+    #     encouraging_message = msg.split("$new", 1)[1]
+    #     update_encouragements(encouraging_message)
+    #     await message.channel.send("New encouraging message added.")
+    #
+    # if msg.startswith
 
 # with open('reports.json', 'a+', encoding='utf-8') as f:
 #   try:
@@ -1169,15 +1504,15 @@ async def on_member_join(member):
 
     role = discord.utils.get(member.guild.roles, name='Member')
     await member.add_roles(role)
-#
-# @bot.event
-# async def on_member_remove(member):
-#
-#     b = [f"{member} has just left the server :(", f"{member} just left we hope you had a good time.", f"Oh no {member} has left the server.", f"{member} has just left. Come back soon! :')"]
-#     leave_message = b[randint(0, 1)]
-#     channel = discord.utils.get(member.guild.channels, name='welcome-and-leave')
-#     await channel.send(leave_message)
-#     print(f"{member} has just left the server")
+
+@bot.event
+async def on_member_remove(member):
+
+    b = [f"{member} has just left the server :(", f"{member} just left we hope you had a good time.", f"Oh no {member} has left the server.", f"{member} has just left. Come back soon! :')"]
+    leave_message = b[randint(0, 1)]
+    channel = discord.utils.get(member.guild.channels, name='welcome-and-leave')
+    await channel.send(leave_message)
+    print(f"{member} has just left the server")
 
 
 @bot.event
@@ -1476,6 +1811,32 @@ async def on_guild_role_update(before, after):
                     if channel.name == 'modlog':
                         await channel.send(embed=embed)
 
+
+# target_channel_id = 844963802575273984
+#
+# @tasks.loop(hours=2)
+# async def called_once_a_day():
+#     message_channel = bot.get_channel(target_channel_id)
+#     Giveaway_Amounts = ["10,000", "1000", "", "2,000", "4,000", "15,000"]
+#     MEE6 = await message_channel.send("Hello Everyone Today, Is a New Day. With New Giveaways. Todays giveaway will be for")
+#     await asyncio.sleep(1.5)
+#     await MEE6.edit(content="Hello Everyone Today, Is a New Day. With New Giveaways. Todays giveaway will be for •")
+#     await asyncio.sleep(1.5)
+#     await MEE6.edit(content="Hello Everyone Today, Is a New Day. With New Giveaways. Todays giveaway will be for ••")
+#     await asyncio.sleep(1.5)
+#     await MEE6.edit(content="Hello Everyone Today, Is a New Day. With New Giveaways. Todays giveaway will be for •••")
+#     await asyncio.sleep(1.5)
+#     b = [f"10,000", f"1,000", f"2,000", f"4,000", "15,000"]
+#     Giveaway_Amounts1 = b[randint(0, 1)]
+#     await MEE6.edit(content=f"Hello Everyone Today, Is a New Day. With New Giveaways. Todays giveaway will be for ••• {Giveaway_Amounts1} DANK COINS!")
+# #         await message.channel.send(f'This is your random number {random.randrange(100000)}')
+#
+#
+# @called_once_a_day.before_loop
+# async def before():
+#     await bot.wait_until_ready()
+#
+# called_once_a_day.start()
 
 
 bot.run(TOKEN)
