@@ -1331,6 +1331,9 @@ async def on_message(message):
         await message.channel.send("You are prohibited to use those words!")
 
 
+
+
+
     # options = starter_encouragements
     # if "encouragements" in db.keys():
     #     options = options + db["encouragements"]
