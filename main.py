@@ -5,8 +5,14 @@ import os
 import random
 import urllib
 from random import randint
+import functools
+import itertools
+import math
+import dblpy
+import youtube_dl
+from async_timeout import timeout
 
-
+import youtube_dl
 import requests
 from datetime import date
 from discord.ext import tasks
@@ -28,8 +34,11 @@ GUILD = os.getenv('DISCORD_GUILD')
 
 intents = discord.Intents.all()
 
-bot = commands.Bot(command_prefix="$", description="Spirit Bot. Initialized", case_insensitive=True, intents=intents)
-# bot = commands.Bot(command_prefix='$') #define command decorator
+bot = commands.Bot(command_prefix="$",description='A Simple, Yet Complex Bot!')
+
+
+# bot = commands.Bot('$', description='Yet another music bot.')
+
 
 sad_words = ["sad", "depressed", "unhappy", "angry", "miserable", "depressing"]
 
@@ -61,6 +70,19 @@ def delete_encouragment(index):
   if len(encouragements) > index:
     del encouragements[index]
     db["encouragements"] = encouragements
+
+
+
+
+@bot.event
+async def on_ready():
+    print('Logged in as')
+    print(bot.user.name)
+    print(bot.user.id)
+    print('------')
+
+bot.add_cog(Music(bot))
+
 
 
 
@@ -105,6 +127,7 @@ def delete_encouragment(index):
 
 
 async def add_blacklist(message):
+
 
   if message.content.startswith('Block List'):
       sureee = await message.guild.fetch_member(message.raw_mentions[0])
@@ -278,48 +301,69 @@ async def on_message(message):
     # # if message.author == bot.user:
     # #     return
     #
-    await update_levels_txt(message)
+  await update_levels_txt(message)
 
-    msg_count = 1
-    with open('Levels.txt', 'r', encoding='utf-8') as q:
-        try:
-            for line in q:
-                if line.startswith(str(message.author.id)):
-                    (user_id, msg_count) = line.split(',')
-        except Exception as e:
-            print(e)
+  msg_count = 1
+  with open('Levels.txt', 'r', encoding='utf-8') as q:
+      try:
+          for line in q:
+              if line.startswith(str(message.author.id)):
+                  (user_id, msg_count) = line.split(',')
+      except Exception as e:
+          print(e)
 
-    msg_count = int(msg_count)
-    if (msg_count == 10):
-        await message.channel.send(f'{message.author.mention} has leveled up to Level 2!')
-    elif (msg_count == 20):
-        await message.channel.send(f'{message.author.mention} has leveled up to Level 3!')
-    elif (msg_count == 40):
-        await message.channel.send(f'{message.author.mention} has leveled up to Level 4!')
-    elif (msg_count > 60):
-        await message.channel.send(f'{message.author.mention} has leveled up to Level 5!')
-    elif (msg_count > 80):
-        await message.channel.send(f'{message.author.mention} has leveled up to Level 6!')
-    elif (msg_count == 100):
-        await message.channel.send(f'{message.author.mention} has leveled up to Level 7!')
-    elif (msg_count == 200):
-        await message.channel.send(f'{message.author.mention} has leveled up to Level 8!')
-    elif (msg_count > 300):
-        await message.channel.send(f'{message.author.mention} has leveled up to Level 9!')
-    elif (msg_count > 350):
-        await message.channel.send(f'{message.author.mention} has leveled up to Level 10!')
-    elif (msg_count == 400):
-        await message.channel.send(f'{message.author.mention} has leveled up to Level 11!')
-    elif (msg_count == 500):
-        await message.channel.send(f'{message.author.mention} has leveled up to Level 12!')
-    elif (msg_count > 750):
-        await message.channel.send(f'{message.author.mention} has leveled up to Level 13!')
-    elif (msg_count > 1000):
-        await message.channel.send(f'{message.author.mention} has leveled up to Level 14!')
-    elif (msg_count > 2000):
-        await message.channel.send(f'{message.author.mention} has leveled up to Level 15!')
+  msg_count = int(msg_count)
+  if (msg_count == 10):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 2!')
+  elif (msg_count == 20):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 3!')
+  elif (msg_count == 40):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 4!')
+  elif (msg_count == 60):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 5!')
+  elif (msg_count == 80):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 6!')
+  elif (msg_count == 100):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 7!')
+  elif (msg_count == 200):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 8!')
+  elif (msg_count == 300):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 9!')
+  elif (msg_count == 350):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 10!')
+  elif (msg_count == 400):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 11!')
+  elif (msg_count == 500):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 12!')
+  elif (msg_count == 750):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 13!')
+  elif (msg_count == 1000):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 14!')
+  elif (msg_count == 2000):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 15!')
+  elif (msg_count == 2150):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 16!')
+  elif (msg_count == 2300):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 17!')
+  elif (msg_count == 2350):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 18!')
+  elif (msg_count == 2500):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 19!')
+  elif (msg_count == 2750):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 20!')
+  elif (msg_count == 3000):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 21!')
+  elif (msg_count == 3500):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 22!')  
+  elif (msg_count == 4000):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 23!')
+  elif (msg_count == 5000):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 24!')
+  elif (msg_count == 6000):
+      await message.channel.send(f'{message.author.mention} has leveled up to Level 25!')         
 
-                        
+
+
 
 
   #     msg_count = 1
@@ -383,22 +427,22 @@ async def on_message(message):
 
 
 
-  if message.content.startswith('Server Icon'):
-      Guild = message.guild
+  # if message.content.startswith('Server Icon'):
+  #     Guild = message.guild
 
-      # ping = Image.open("ping.png")
+  #     # ping = Image.open("ping.png")
 
-      asset010101 = Guild.icon_url_as(size = 128)
-      data10101 = BytesIO(await asset010101.read())
-      pfp10101 = Image.open(data10101)
+  #     asset010101 = Guild.icon_url_as(size = 128)
+  #     data10101 = BytesIO(await asset010101.read())
+  #     pfp10101 = Image.open(data10101)
 
-      pfp10101 = pfp10101.resize((708,708))
+  #     pfp10101 = pfp10101.resize((708,708))
 
-      # ping.paste(pfp10101, (354,354))
+  #     # ping.paste(pfp10101, (354,354))
 
-      pfp10101.save("Server_Icon.png")
+  #     pfp10101.save("Server_Icon.png")
 
-      await message.channel.send(file = discord.File("Server_Icon.png"))
+  #     await message.channel.send(file = discord.File("Server_Icon.png"))
 
 
 
@@ -753,15 +797,6 @@ async def on_message(message):
               text="Error: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
               icon_url=message.author.avatar_url)  # + " " + datetime.datetime.utcnow())
           await message.channel.send(content=None, embed=embed, )
-
-  if message.content.startswith('Imprison'):
-      mentioner = await message.guild.fetch_member(message.raw_mentions[0])
-      role = message.guild.get_role(848324674449702942)
-      v_channel = message.guild.get_channel(848327144140832849)
-      await mentioner.add_roles(role)
-      await v_channel.send(f"Successfully imprisoned {mentioner.mention} ⛓!")
-      await role.set_permissions(role, speak=False, send_messages=False, read_message_history=True, read_messages=False)
-
 
 
   if message.content.startswith('$Purge'):
@@ -1986,5 +2021,70 @@ async def on_guild_role_update(before, after):
 # called_once_a_day.start()
 
 keep_alive()
+
+# @bot.command()
+# async def play(ctx, url : str):
+#     song_there = os.path.isfile("song.mp3")
+#     try:
+#         if song_there:
+#             os.remove("song.mp3")
+#     except PermissionError:
+#         await ctx.send("Wait for the current playing music to end or use the 'stop' command")
+#         return
+
+#     voiceChannel = discord.utils.get(ctx.guild.voice_channels, name='general')
+#     await voiceChannel.connect()
+#     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+
+#     ydl_opts = {
+#         'format': 'bestaudio/best',
+#         'postprocessors': [{
+#             'key': 'FFmpegExtractAudio',
+#             'preferredcodec': 'mp3',
+#             'preferredquality': '192',
+#         }],
+#     }
+#     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+#         ydl.download([url])
+#     for file in os.listdir("./"):
+#         if file.endswith(".mp3"):
+#             os.rename(file, "song.mp3")
+#     voice.play(discord.FFmpegPCMAudio("song.mp3"))
+
+
+# @bot.command()
+# async def leave(ctx):
+#     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+#     if voice.is_connected():
+#         await voice.disconnect()
+#     else:
+#         await ctx.send("The bot is not connected to a voice channel.")
+
+
+# @bot.command()
+# async def pause(ctx):
+#     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+#     if voice.is_playing():
+#         voice.pause()
+#     else:
+#         await ctx.send("Currently no audio is playing.")
+
+
+# @bot.command()
+# async def resume(ctx):
+#     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+#     if voice.is_paused():
+#         voice.resume()
+#     else:
+#         await ctx.send("The audio is not paused. :pause_button: ")
+
+
+# @bot.command()
+# async def stop(ctx):
+#     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+#     voice.stop()
+
+
+
 
 bot.run("ODQ0NzQ2NDExNDI5OTg2MzE0.YKW5Zw.lJ2OLEiDa80egfSUvrktTMWA7zA")
