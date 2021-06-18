@@ -1,3 +1,6 @@
+import os
+
+my_secret = os.environ['token']
 import asyncio
 import datetime
 import json
@@ -1571,4 +1574,4 @@ async def on_guild_role_update(before, after, guild):
 
 keep_alive()
 bot.add_cog(Music(bot))
-bot.run("ODQ0NzQ2NDExNDI5OTg2MzE0.YKW5Zw.lJ2OLEiDa80egfSUvrktTMWA7zA")
+bot.run(my_secret)
