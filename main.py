@@ -603,35 +603,7 @@ async def on_message(message):
           text="Asked by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
           icon_url=icon)  # + " " + datetime.datetime.utcnow())
       await message.channel.send(content=None, embed=embed)
-      # embed = discord.Embed(
-      #     title=name + " Server Information",
-      #     description="Server info via {guild.name}",
-      #     color=discord.Color.blue()
-      # )
-      # embed.set_thumbnail(url=icon)
-      # embed.add_field(name="Owner", value=owner, inline=True)
-      # embed.add_field(name="Server ID", value=id, inline=True)
-      # embed.add_field(name="Region", value=region, inline=True)
-      # embed.add_field(name="Member Count", value=memberCount, inline=True)
-      #
-      # await ctx.send(embed=embed)
-      # #
-      # if message.content.startswith('Server info'):
-      #     # AP = await message.guild.fetch_member(message.raw_mentions[0])
-      #     # guild = message.guild
-      #     AP = await message.guild
-      #
-      #     embed = discord.Embed(title=f"Server info {AP.name}", description=f"{AP.id}")
-      #     embed.add_field(name=f"{AP.name} was created at:", value=f'{AP.created_at}')
-      #     embed.add_field(name=f"{AP.name} has this many members:", value=f'{AP.member_count}')
-      #     embed.set_footer(
-      #         text="Asked by: " + message.author.display_name + " at " + str(datetime.datetime.utcnow()),
-      #         icon_url=AP.avatar_url)  # + " " + datetime.datetime.utcnow())
-      #     await message.channel.send(content=None, embed=embed)
 
-
-
-      # await message.channel.send(f'{IDC.name}, {lol.id}, {lol.color}')
 
   if message.content == '$Hack':
       mes12 = await message.channel.send("The hacking process has beginning in 5")
@@ -1334,7 +1306,6 @@ async def on_message(message):
               for webhook in webhooks:
                       await webhook.delete()
 
-
 @bot.event
 async def on_guild_channel_create(channel):
 
@@ -1353,46 +1324,38 @@ async def on_guild_channel_create(channel):
       await channel.send(embed=embed)
 
 @bot.event
-async def on_message_edit(before, after, guild):
-    if not before.author.bot:
-        if before.content != after.content:
+async def on_message_edit(after, message):
+    if not message.author.bot:
+      embed = Embed(title="Message edit",
+                    description=f"Edited by {message.author.display_name}.",
+                    colour=message.author.colour,
+                    timestamp=datetime.datetime.utcnow())
 
+      fields = [("Message", after.content, False)]
 
-            embed = Embed(title="Message edit",
-                          description=f"Edit by {before.author.display_name}.",
-                          colour=after.author.colour,
-                          timestamp=datetime.datetime.utcnow())
+      for name, value, inline in fields:
+          embed.add_field(name=name, value=value, inline=inline)
 
-            fields = [("Before", before.content, False),
-                      ("After", after.content, False)]
-
-            for name, value, inline in fields:
-                embed.add_field(name=name, value=value, inline=inline)
-
-                guild = guild
-                channel = discord.utils.get(guild.channels, name="modlog")
-                await channel.send(embed=embed)
+          guild = message.guild
+          channel = discord.utils.get(guild.channels, name="modlog")
+          await channel.send(embed=embed)
 
 @bot.event
-async def on_message_delete(before, after, guild):
-    if not before.author.bot:
-        if before.content != after.content:
+async def on_message_delete(message):
+    if not message.author.bot:
+      embed = Embed(title="Message delete",
+                    description=f"Delete by {message.author.display_name}.",
+                    colour=message.author.colour,
+                    timestamp=datetime.datetime.utcnow())
 
+      fields = [("Message", message.content, False)]
 
-            embed = Embed(title="Message delete",
-                          description=f"Delete by {before.author.display_name}.",
-                          colour=after.author.colour,
-                          timestamp=datetime.datetime.utcnow())
+      for name, value, inline in fields:
+          embed.add_field(name=name, value=value, inline=inline)
 
-            fields = [("Before", before.content, False),
-                      ("After", after.content, False)]
-
-            for name, value, inline in fields:
-                embed.add_field(name=name, value=value, inline=inline)
-
-                guild = guild
-                channel = discord.utils.get(guild.channels, name="modlog")
-                await channel.send(embed=embed)
+          guild = message.guild
+          channel = discord.utils.get(guild.channels, name="modlog")
+          await channel.send(embed=embed)
 
 
 @bot.event
@@ -1484,26 +1447,26 @@ async def on_invite_create(invite):
       await channel.send(embed=embed)
 
 
-@bot.event
-async def on_message_delete(before, guild):
-  if not before.author.bot:
-      if before.content:
+# @bot.event
+# async def on_message_delete(before, guild):
+#   if not before.author.bot:
+#       if before.content:
 
 
-          embed = Embed(title="Message deleted",
-                        description=f"Deleted by {before.author.display_name}.",
-                        colour=before.author.colour,
-                        timestamp=datetime.datetime.utcnow())
+#           embed = Embed(title="Message deleted",
+#                         description=f"Deleted by {before.author.display_name}.",
+#                         colour=before.author.colour,
+#                         timestamp=datetime.datetime.utcnow())
 
-          fields = [("Deleted message:", before.content, False)]#,
-                    #("After", after.content, False)]
+#           fields = [("Deleted message:", before.content, False)]#,
+#                     #("After", after.content, False)]
 
-          for name, value, inline in fields:
-              embed.add_field(name=name, value=value, inline=inline)
+#           for name, value, inline in fields:
+#               embed.add_field(name=name, value=value, inline=inline)
 
-      guild = guild
-      channel = discord.utils.get(guild.channels, name="modlog")
-      await channel.send(embed=embed)
+#       guild = guild
+#       channel = discord.utils.get(guild.channels, name="modlog")
+#       await channel.send(embed=embed)
 
 
 @bot.event
@@ -1569,6 +1532,18 @@ async def on_guild_role_update(before, after, guild):
       await channel.send(embed=embed)
 
 
+
+@bot.event
+async def on_guild_join(guild):
+    for channel in guild.text_channels:
+        if channel.permissions_for(guild.me).send_messages:
+          emoji23 = discord.utils.get(bot.emojis, name='SpiritJoinServer')
+          # await channel.send('Hi there' + str(emoji23) + "\n" + "You now have added me to your amazing server. Feel ")
+          em = discord.Embed(title=f"Hello my name is Spirit",color=discord.Color.blue())
+          em.add_field(name="To get started:", value=f'Type: ```$help``` this is your way to access all our commands. To initiate audit-logging type: ```$Init audit```')
+          em.add_field(name="**Important Links**", value=f'**Support**: https://discord.gg/fHpgwz6sE6 \n **Invite**: https://discord.com/api/oauth2/authorize?client_id=844746411429986314&permissions=8&scope=bot%20applications.commands \n **Website**: https://leonf4331.wixsite.com/spirit-bot')
+          await channel.send(embed = em)          
+        break
 
 
 
